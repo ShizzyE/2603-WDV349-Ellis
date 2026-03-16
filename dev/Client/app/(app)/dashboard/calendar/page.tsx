@@ -2,6 +2,7 @@
 import React from "react"
 import { Button } from "@/components/ui/button"
 import Header from "@/components/header"
+import CalendarCom from "@/components/calendar-com"
 
 export default function Calendar() {
   return (
@@ -9,7 +10,7 @@ export default function Calendar() {
       <Header title="Calendar" />
 
       <div>
-        <h1>hi</h1>
+        <CalendarCom />
       </div>
     </div>
   )
