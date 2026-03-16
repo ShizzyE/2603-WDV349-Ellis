@@ -1,34 +1,15 @@
 "use client"
 import React from "react"
-import { Button } from "@/components/ui/button"
+import Header from "@/components/header"
 
 export default function Dashboard() {
   return (
-    <div className="flex min-h-svh flex-col p-4 sm:p-6">
-
-      {/* Header */}
-      <div className="relative flex items-center justify-center mb-8 sm:mb-10">
-
-        {/* Title */}
-        <h1 className="text-2xl sm:text-3xl md:text-4xl font-bold text-center">
-          Dashboard
-        </h1>
-
-        {/* Logout Button */}
-        <Button
-          className="absolute right-0 text-sm sm:text-base px-3 py-1 sm:px-4 sm:py-2"
-          variant={"destructive"}
-        >
-          Logout
-        </Button>
-
+   <div>
+      <Header title="Dashboard"/>
+      
+      <div>
+        <h1>hi</h1>
       </div>
-
-      {/* Page Content */}
-      <div className="flex flex-col gap-4 text-sm sm:text-base leading-loose">
-        Dashboard Page Content
-      </div>
-
-    </div>
+   </div>
   )
 }
