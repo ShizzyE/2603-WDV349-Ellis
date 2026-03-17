@@ -42,11 +42,11 @@ export default function Planning() {
     tasks.filter((t) => t.type === type)
 
   return (
-    <div className="p-6 space-y-6">
+    <div className="space-y-6 p-6">
       <Header title="Planning" />
 
       {/* Input Section */}
-      <Card className="p-4 rounded-2xl shadow-md">
+      <Card className="rounded-2xl p-4 shadow-md">
         <CardContent className="space-y-4">
           <h2 className="text-xl font-semibold">Add Task</h2>
 
@@ -86,7 +86,7 @@ export default function Planning() {
       </Card>
 
       {/* AI Suggestions Placeholder */}
-      <Card className="p-4 rounded-2xl border-dashed border-2">
+      <Card className="rounded-2xl border-2 border-dashed p-4">
         <CardContent>
           <h2 className="text-lg font-semibold">AI Suggestions</h2>
           <p className="text-sm text-muted-foreground">
@@ -96,16 +96,15 @@ export default function Planning() {
       </Card>
 
       {/* Task Categories */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-
+      <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
         {/* Regular */}
         <div>
-          <h3 className="font-semibold mb-2">Regular</h3>
+          <h3 className="mb-2 font-semibold">Regular</h3>
           <div className="space-y-2">
             {filterTasks("regular").map((task) => (
               <div
                 key={task.id}
-                className={`p-3 rounded-xl text-white ${getColor(task.type)}`}
+                className={`rounded-xl p-3 text-white ${getColor(task.type)}`}
               >
                 {task.text}
               </div>
@@ -115,12 +114,12 @@ export default function Planning() {
 
         {/* Reminders */}
         <div>
-          <h3 className="font-semibold mb-2">Reminders</h3>
+          <h3 className="mb-2 font-semibold">Reminders</h3>
           <div className="space-y-2">
             {filterTasks("reminder").map((task) => (
               <div
                 key={task.id}
-                className={`p-3 rounded-xl text-white ${getColor(task.type)}`}
+                className={`rounded-xl p-3 text-white ${getColor(task.type)}`}
               >
                 {task.text}
               </div>
@@ -130,12 +129,12 @@ export default function Planning() {
 
         {/* Priority */}
         <div>
-          <h3 className="font-semibold mb-2">Priority</h3>
+          <h3 className="mb-2 font-semibold">Priority</h3>
           <div className="space-y-2">
             {filterTasks("priority").map((task) => (
               <div
                 key={task.id}
-                className={`p-3 rounded-xl text-white ${getColor(task.type)}`}
+                className={`rounded-xl p-3 text-white ${getColor(task.type)}`}
               >
                 {task.text}
               </div>

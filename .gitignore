@@ -1,0 +1,29 @@
+# Dependency Directory
+node_modules/
+package-lock.json
+
+# Mac OS
+.DS_Store
+
+# VS Code
+.vscode/
+
+# Logs
+Logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# ENV Vars
+.env
+
+# Images, PDFs, ZIPs, etc. 
+# Before committing a binary file, make sure it's really necessary.
+# *.jpg
+# *.png
+# *.zip
+# *.pdf
+
+
+**Note:** Organize portfolio work into sub-folders and include README files to explain the work in progress. Review [this article](https://docs.github.com/en/repositories/managing-your-repositorys-settings-and-features/customizing-your-repository/about-readmes) to generate ideas for your README files. 

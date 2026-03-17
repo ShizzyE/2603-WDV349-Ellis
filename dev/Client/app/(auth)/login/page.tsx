@@ -1,16 +1,16 @@
-"use client";
+"use client"
 import React, { useEffect } from "react"
 import SpaceBackground from "@/components/spacebg"
 import { useRouter } from "next/navigation"
 
 export default function Login() {
-const router = useRouter(); 
+  const router = useRouter()
 
   const handleClick = () => {
-    console.log("Login button clicked");
+    console.log("Login button clicked")
 
-    router.push("/home");
-  };
+    router.push("/home")
+  }
 
   return (
     <div className="flex min-h-svh items-center justify-center p-6">

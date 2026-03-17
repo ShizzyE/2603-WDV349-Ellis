@@ -18,7 +18,6 @@ export default function Header({ title }: { title: string }) {
     <div className="flex flex-col p-4 sm:p-6">
       {/* Header */}
       <div className="relative mb-8 flex items-center justify-center sm:mb-10">
-
         {/* LEFT ICON NAV */}
         <div className="absolute left-0 flex flex-row gap-4">
           {links.map((link, index) => {
@@ -28,7 +27,7 @@ export default function Header({ title }: { title: string }) {
               <MotionLink
                 key={index}
                 href={link.href}
-                className="relative flex items-center justify-center p-2 rounded-lg hover:bg-white/10 hover:shadow-lg transition"
+                className="relative flex items-center justify-center rounded-lg p-2 transition hover:bg-white/10 hover:shadow-lg"
                 whileHover="hover"
               >
                 <Icon size={28} />
@@ -60,7 +59,6 @@ export default function Header({ title }: { title: string }) {
         >
           Logout
         </Button>
-
       </div>
     </div>
   )
