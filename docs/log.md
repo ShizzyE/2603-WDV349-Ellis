@@ -18,7 +18,8 @@ This week was mostly about setting things up and solidifying my plan. The main p
 
 ### Week 2
 
-Stay tuned for this weeks summary...
+This past week, I focused primarily on the frontend of my project and getting the client-side structure properly set up. A large part of my time was spent installing the UI libraries I plan to use and becoming more comfortable working with TypeScript in my project. One of the main challenges I ran into this week was getting the page layouts to look the way I envisioned. I was going for a modern interface while still keeping the design simple and clean. Balancing aesthetics with usability took some trail and errors with layouts and spacing. 
+ One of my biggest accomplishments this week was improving my workflow as a developer. I spent time researching solutions, utilizing AI tools to help guide my development process, and integrating what I learned into a more cohesive workflow. Using the research and build approach  helped me work more efficiently and feel more confident moving forward with the project. This upcoming week I plan on adding the data to my website and connecting my backend end set up to my frontend, only once the backend is completed.  
 
 ### Week 3
 
