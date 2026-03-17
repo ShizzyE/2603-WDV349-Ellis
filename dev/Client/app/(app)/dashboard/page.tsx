@@ -8,7 +8,7 @@ export default function Dashboard() {
       <Header title="Dashboard"/>
       
       <div>
-        <h1>hi</h1>
+        <h1>Add cool animation later</h1>
       </div>
    </div>
   )

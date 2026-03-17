@@ -9,7 +9,7 @@ export default function Settings() {
       <Header title="Settings" />
 
       <div>
-        <h1>hi</h1>
+        <h1>Settings</h1>
       </div>
     </div>
   )

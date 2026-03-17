@@ -9,7 +9,7 @@ export default function About() {
       <Header title="About" />
 
       <div>
-        <h1>hi</h1>
+        <h1>About</h1>
       </div>
     </div>
   )
