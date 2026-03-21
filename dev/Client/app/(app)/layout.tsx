@@ -1,6 +1,7 @@
 "use client"
 import React from "react"
 import Link from "next/link"
+import { Settings, Info, LayoutDashboard } from "lucide-react"
 
 export default function DashboardLayout({
   children,
@@ -18,20 +19,24 @@ export default function DashboardLayout({
         <nav className="flex flex-col gap-6 text-lg">
           <Link
             href="/dashboard"
-            className="transition-colors hover:text-accent"
+            className="flex items-center gap-2 rounded-lg p-2 transition hover:bg-white/10 hover:shadow-lg"
           >
-            Dashboard
+            <LayoutDashboard size={20} /> Dashboard
           </Link>
 
-          <Link href="/about" className="transition-colors hover:text-accent">
+          <Link
+            href="/about"
+            className="flex items-center gap-2 rounded-lg p-2 transition hover:bg-white/10 hover:shadow-lg"
+          >
+            <Info size={20} />
             About
           </Link>
 
           <Link
             href="/settings"
-            className="transition-colors hover:text-accent"
+            className="flex items-center gap-2 rounded-lg p-2 transition hover:bg-white/10 hover:shadow-lg"
           >
-            Settings
+            <Settings size={20} /> Settings
           </Link>
         </nav>
       </aside>
