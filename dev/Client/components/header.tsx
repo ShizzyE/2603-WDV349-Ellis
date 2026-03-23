@@ -4,10 +4,22 @@ import { Button } from "@/components/ui/button"
 import { Bot, Notebook, Calendar } from "lucide-react"
 import { motion } from "framer-motion"
 import Link from "next/link"
+import { useDispatch } from "react-redux"
+import { useRouter } from "next/navigation"
+import { logOut } from "@/redux/features/auth-slice"
+import { AppDispatch } from "@/redux/store"
 
 const MotionLink = motion(Link)
 
 export default function Header({ title }: { title: string }) {
+  const dispatch = useDispatch<AppDispatch>()
+  const router = useRouter()
+
+  const handleLogout = () => {
+    dispatch(logOut()) //  clear redux state
+    router.push("/login") //  redirect to login
+  }
+
   const links = [
     { icon: Calendar, href: "/dashboard/calendar" },
     { icon: Notebook, href: "/dashboard/planning" },
@@ -16,9 +28,9 @@ export default function Header({ title }: { title: string }) {
 
   return (
     <div className="flex flex-col p-4 sm:p-6">
-      {/* Header */}
       <div className="relative mb-8 flex items-center justify-center sm:mb-10">
-        {/* LEFT ICON NAV */}
+        
+        {/* LEFT NAV */}
         <div className="absolute left-0 flex flex-row gap-4">
           {links.map((link, index) => {
             const Icon = link.icon
@@ -33,7 +45,6 @@ export default function Header({ title }: { title: string }) {
               >
                 <Icon size={28} />
 
-                {/* Animated underline */}
                 <motion.span
                   className="absolute bottom-0 left-0 h-[2px] w-full bg-[var(--foreground)]"
                   initial={{ scaleX: 0 }}
@@ -55,6 +66,7 @@ export default function Header({ title }: { title: string }) {
 
         {/* LOGOUT */}
         <Button
+          onClick={handleLogout}
           className="absolute right-0 px-3 py-1 text-sm sm:px-4 sm:py-2 sm:text-base"
           variant="destructive"
         >

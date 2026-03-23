@@ -126,3 +126,37 @@
     @apply font-sans;
     }
 }
+
+/* FullCalendar Dark Mode Fix */
+/* Header (Sun, Mon, Tue...) */
+.fc-col-header-cell-cushion {
+  color: black;
+}
+
+/* Day numbers */
+.fc-daygrid-day-number {
+  color: var(--foreground);
+}
+
+/* Calendar background */
+.fc {
+  background-color: var(--card);
+  color: var(--foreground);
+}
+
+/* Borders */
+.fc-theme-standard td,
+.fc-theme-standard th {
+  border-color: var(--border);
+}
+
+/* Today highlight */
+.fc-day-today {
+  background-color: var(--chart-1) !important;
+}
+
+/* Hover effect */
+.fc-daygrid-day:hover {
+  background-color: var(--muted);
+  cursor: pointer;
+}

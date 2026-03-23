@@ -16,6 +16,7 @@ export default function CalendarCom() {
         plugins={[dayGridPlugin, interactionPlugin]}
         initialView="dayGridMonth"
         height="auto"
+        themeSystem="standard"
       />
     </div>
   )
