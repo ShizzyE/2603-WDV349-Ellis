@@ -10,7 +10,7 @@ export default function Calendar() {
       <Header title="Calendar" />
 
       <div>
-        <CalendarCom />
+        <CalendarCom  />
       </div>
     </div>
   )

@@ -29,6 +29,7 @@ export default function Header({ title }: { title: string }) {
                 href={link.href}
                 className="relative flex items-center justify-center rounded-lg p-2 transition hover:bg-white/10 hover:shadow-lg"
                 whileHover="hover"
+                whileTap={{ scale: 0.98 }}
               >
                 <Icon size={28} />
 

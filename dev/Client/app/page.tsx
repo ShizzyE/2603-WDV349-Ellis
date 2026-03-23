@@ -1,14 +1,24 @@
 "use client"
 import { Button } from "@/components/ui/button"
-import React, { useEffect } from "react"
+import React, { useEffect, useState } from "react"
 import { useRouter } from "next/navigation"
+import { logIn, logOut } from "@/redux/features/auth-slice"
+import { useDispatch } from "react-redux"
+import { AppDispatch } from "@/redux/store"
 
 export default function Page() {
   const router = useRouter()
 
-  const handleClick = () => {
-    console.log("Account created, redirecting to home page")
+  const dispatch = useDispatch<AppDispatch>()
 
+  const [username, setUsername] = React.useState("")
+  const [email, setEmail] = React.useState("")
+  const [password, setPassword] = React.useState("")
+
+  const redirectToHome = () => {
+    console.log("Logged in, redirecting to home page")
+
+    dispatch(logIn(username)) // Update Redux state with username
     router.push("/home")
   }
 
@@ -31,27 +41,29 @@ export default function Page() {
           <form className="flex flex-col gap-4">
             <input
               type="text"
+              onChange={(e) => setUsername(e.target.value)}
               placeholder="Username"
               className="rounded-lg border border-foreground/20 bg-background px-4 py-2 outline-none hover:shadow-md focus:shadow-lg"
             />
 
             <input
               type="email"
+              onChange={(e) => setEmail(e.target.value)}
               placeholder="Email"
               className="rounded-lg border border-foreground/20 bg-background px-4 py-2 outline-none hover:shadow-md focus:shadow-lg"
             />
 
             <input
               type="password"
+              onChange={(e) => setPassword(e.target.value)}
               placeholder="Password"
               className="rounded-lg border border-foreground/20 bg-background px-4 py-2 outline-none hover:shadow-md focus:shadow-lg"
             />
 
             <button
               type="button"
-              onClick={handleClick}
-              className="mt-2 rounded-lg bg-primary py-2 font-medium text-background hover:bg-primary/90 hover:shadow-md cursor-pointer
-              "
+              onClick={redirectToHome}
+              className="mt-2 cursor-pointer rounded-lg bg-primary py-2 font-medium text-background hover:bg-primary/90 hover:shadow-md"
             >
               Create Account
             </button>
@@ -64,7 +76,7 @@ export default function Page() {
 
             <button
               type="button"
-              className="flex items-center justify-center rounded-lg border border-foreground py-2 cursor-pointer hover:shadow-md"
+              className="flex cursor-pointer items-center justify-center rounded-lg border border-foreground py-2 hover:shadow-md"
               onClick={redirectToLogin}
             >
               Login

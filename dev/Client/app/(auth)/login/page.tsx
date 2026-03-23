@@ -3,13 +3,21 @@ import { Button } from "@/components/ui/button"
 import React, { useEffect } from "react"
 import { useRouter } from "next/navigation"
 import { motion } from "framer-motion"
+import { logIn, logOut } from "@/redux/features/auth-slice"
+import { useDispatch } from "react-redux"
+import { AppDispatch } from "@/redux/store"
 
 export default function Login() {
   const router = useRouter()
 
-  const handleClick = () => {
-    console.log("Account created, redirecting to home page")
+  const dispatch = useDispatch<AppDispatch>()
 
+  const [username, setUsername] = React.useState("")
+  const [password, setPassword] = React.useState("")
+
+  const loginToApp = () => {
+    console.log("Account created, redirecting to home page")
+    dispatch(logIn(username))
     router.push("/home")
   }
 
@@ -31,20 +39,22 @@ export default function Login() {
 
           <form className="flex flex-col gap-4">
             <input
-              type="email"
-              placeholder="Email"
+              type="text"
+              onChange={(e) => setUsername(e.target.value)}
+              placeholder="Username"
               className="rounded-lg border border-foreground/20 bg-background px-4 py-2 outline-none hover:shadow-md focus:shadow-lg"
             />
 
             <input
               type="password"
+              onChange={(e) => setPassword(e.target.value)}
               placeholder="Password"
               className="rounded-lg border border-foreground/20 bg-background px-4 py-2 outline-none hover:shadow-md focus:shadow-lg"
             />
 
             <button
               type="button"
-              onClick={handleClick}
+              onClick={loginToApp}
               className="mt-2 cursor-pointer rounded-lg bg-primary py-2 font-medium text-white hover:bg-primary/90 hover:shadow-md"
             >
               Login
@@ -54,7 +64,7 @@ export default function Login() {
               type="button"
               onClick={redirectToSignUp}
               className="cursor-pointer font-bold text-foreground"
-              whileHover={{ scale: 1.10 }}
+              whileHover={{ scale: 1.1 }}
               whileTap={{ scale: 0.95 }}
             >
               Sign Up ?
