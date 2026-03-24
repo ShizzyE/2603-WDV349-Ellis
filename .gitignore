@@ -26,4 +26,44 @@ yarn-error.log*
 # *.pdf
 
 
-**Note:** Organize portfolio work into sub-folders and include README files to explain the work in progress. Review [this article](https://docs.github.com/en/repositories/managing-your-repositorys-settings-and-features/customizing-your-repository/about-readmes) to generate ideas for your README files. 
+# Virtual Environment
+.venv/
+venv/
+env/
+
+# Python cache files
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+
+# Environment variables (VERY IMPORTANT)
+.env
+
+# VS Code / IDE
+.vscode/
+.idea/
+
+# macOS
+.DS_Store
+
+# Logs
+*.log
+
+# Database (if using local files, not PostgreSQL)
+*.sqlite3
+
+# Testing / coverage
+.coverage
+htmlcov/
+
+# Build / dist
+dist/
+build/
+*.egg-info/
+
+# FastAPI / Uvicorn
+*.pid
+
+# Misc
+*.swp
