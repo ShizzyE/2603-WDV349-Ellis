@@ -23,7 +23,7 @@ This past week, I focused primarily on the frontend of my project and getting th
 
 ### Week 3
 
-Stay tuned for this weeks summary...
+So the past week I have enhanced my frontend UI, added Redux as state management for the frontend, and initialized my backend server. Getting the syntax down for Python and just understanding the workflow was a little challenging. Since I have worked in Node my whole developer journey I had to change the way I think when it comes to importing, CRUD rules, and installing my dependencies. Understanding the backend and how to work effectively in it was a big level up for me. Before I would get stuck and overwhelmed with my project structure set up and just getting everything started. This week I plan on completing the backend and connecting it to the frontend. My main focus for these next few days is getting my protected routes set up, testing my endpoints with the db to make sure data is being processed correctly, and connecting my frontend the backend.
 
 ### Week 4
 
