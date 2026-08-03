@@ -34,3 +34,4 @@ Having some familiarity with Sequelize I look forward to using SQLAlchemy as an 
 ## OpenAI API + LangGraph 🤖 (AI + Agent)
 
 To integrate AI into my project and handle prompts efficiently, I will use the OpenAI API along with LangGraph as my AI agent. For testing, I plan to use OpenAI’s GPT‑3.5 Turbo API.
+
