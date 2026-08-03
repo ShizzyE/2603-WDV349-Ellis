@@ -35,3 +35,46 @@ Having some familiarity with Sequelize I look forward to using SQLAlchemy as an 
 
 To integrate AI into my project and handle prompts efficiently, I will use the OpenAI API along with LangGraph as my AI agent. For testing, I plan to use OpenAI’s GPT‑3.5 Turbo API.
 
+---
+
+# Change Order
+
+### Confirm this document summarizes the proposed tech stack
+
+**Yes.** This document accurately summarizes the technologies currently being used to develop PlanBuddy.
+
+### Is there any additional tool or technology you would like to use for this project, given enough time?
+
+Yes.
+
+If I have time, I would like to add these:
+
+- PostgreSQL for persistent data storage
+- Prisma ORM for database management
+- OpenAI API for AI-powered task recommendations
+- Vercel for deployment
+- GitHub Actions for automated testing and deployment
+
+### Proposed changes to the original tech stack
+
+The overall technology stack remains largely unchanged.
+
+Current stack:
+
+- Next.js
+- React
+- TypeScript
+- Tailwind CSS
+- ShadCN UI
+- Redux Toolkit
+- Node.js
+- Express
+
+Additional technologies planned include:
+
+- PostgreSQL
+- Prisma ORM
+- OpenAI API
+- Vercel deployment
+
+These additions support planned functionality and do not significantly alter the project's original direction.
