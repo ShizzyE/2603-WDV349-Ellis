@@ -185,6 +185,7 @@ PlanBuddy will integrate the OpenAI API to provide AI powered functionality, inc
 
 
 
+
 Research References:
 [Harvard: "8 Time Management Tips for Students"](https://summer.harvard.edu/blog/8-time-management-tips-for-students/#3-Build-a-Personalized-Schedule)
 
