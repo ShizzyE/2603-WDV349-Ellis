@@ -44,6 +44,7 @@ export default function Page() {
               onChange={(e) => setUsername(e.target.value)}
               placeholder="Username"
               className="rounded-lg border border-foreground/20 bg-background px-4 py-2 outline-none hover:shadow-md focus:shadow-lg"
+              required
             />
 
             <input
@@ -51,6 +52,7 @@ export default function Page() {
               onChange={(e) => setEmail(e.target.value)}
               placeholder="Email"
               className="rounded-lg border border-foreground/20 bg-background px-4 py-2 outline-none hover:shadow-md focus:shadow-lg"
+              required
             />
 
             <input
@@ -58,6 +60,7 @@ export default function Page() {
               onChange={(e) => setPassword(e.target.value)}
               placeholder="Password"
               className="rounded-lg border border-foreground/20 bg-background px-4 py-2 outline-none hover:shadow-md focus:shadow-lg"
+              required
             />
 
             <button
