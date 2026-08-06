@@ -13,13 +13,12 @@ export default function AIPanel() {
   }
 
   return (
-    <aside className="flex w-80 flex-col border-l border-border bg-background p-4">
+    <aside className="hidden flex-col border-l border-border bg-background p-4 md:flex md:w-48 lg:w-56 xl:w-64 2xl:w-80">
+      {" "}
       <h2 className="mb-4 text-lg font-semibold">AI Assistant</h2>
-
       <div className="mb-4 flex-1 overflow-y-auto text-sm">
         {response || "Ask me anything about your tasks..."}
       </div>
-
       <div className="flex flex-col gap-2">
         <textarea
           value={prompt}
