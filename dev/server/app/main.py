@@ -1,10 +1,12 @@
 from fastapi import FastAPI
 from app.db.database import engine, Base
-from app.models.user import User  # 👈 THIS registers the model
+from app.models.user import User 
+from app.models.task import Task
 from app.routes import users
 
 app = FastAPI()
 
 Base.metadata.create_all(bind=engine)
 
-app.include_router(users.router)
+app.include_router(users.router, prefix="/users", tags=["users"])
+app.include_router(tasks.router, prefix="/tasks", tags=["tasks"])
