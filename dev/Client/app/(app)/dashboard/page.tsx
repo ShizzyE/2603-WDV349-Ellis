@@ -27,27 +27,16 @@ type Label = "School" | "Work" | "Personal" | "Faith" | "Business"
 
 type Task = {
   id: number
-
   title: string
-
   description: string
-
   priority: Priority
-
   label: Label
-
   dueDate: string
-
   status: Status
-
   startDate: string
-
   notes: string
-
   createdAt: string
-
   updatedAt: string
-
   completedAt?: string
 }
 
@@ -304,7 +293,7 @@ export default function Dashboard() {
 
   return (
     <div>
-      <Header title="Dashboard"/>
+      <Header title="Dashboard" />
 
       <main className="flex flex-col gap-8 overflow-y-auto p-4 sm:p-6">
         <Card>
