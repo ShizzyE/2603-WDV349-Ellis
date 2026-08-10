@@ -14,6 +14,6 @@ class Task(Base):
     status = Column(String,nullable=False)
     start_date = Column(Date,nullable=False)
     updated_at = Column(TIMESTAMP(timezone=True), server_default=text('now()'), onupdate=text('now()'))
-    completed_at = Column(TIMESTAMP(timezone=True), server_default=text('now()'))
+    completed_at = Column(TIMESTAMP(timezone=True), nullable=True)
 
     created_at = Column(TIMESTAMP(timezone=True), server_default=text('now()'))

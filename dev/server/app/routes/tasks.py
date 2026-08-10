@@ -7,17 +7,17 @@ from app.models.task import Task
 from app.schemas.task import CreateTask, TaskBase
 from app.db.database import get_db
 
-router = APIRouter(prefix="/tasks", tags=["tasks"])
+router = APIRouter()
 
 
 @router.get("/", response_model=List[CreateTask])
 def get_tasks(db: Session = Depends(get_db)):
-    return db.query(models.Task).all()
+    return db.query(Task).all()
 
 
 @router.get("/{id}", response_model=CreateTask)
 def get_task(id: int, db: Session = Depends(get_db)):
-    task = db.query(models.Task).filter(models.Task.id == id).first()
+    task = db.query(Task).filter(Task.id == id).first()
     if task is None:
         raise HTTPException(status_code=404, detail="Task does not exist")
     return task
@@ -34,7 +34,7 @@ def create_task(task: CreateTask, db: Session = Depends(get_db)):
 
 @router.put("/{id}", response_model=CreateTask)
 def update_task(id: int, updated: TaskBase, db: Session = Depends(get_db)):
-    task_query = db.query(models.Task).filter(models.Task.id == id)
+    task_query = db.query(Task).filter(Task.id == id)
     task = task_query.first()
 
     if task is None:
@@ -47,7 +47,7 @@ def update_task(id: int, updated: TaskBase, db: Session = Depends(get_db)):
 
 @router.delete("/{id}", status_code=204)
 def delete_task(id: int, db: Session = Depends(get_db)):
-    task_query = db.query(models.Task).filter(models.Task.id == id)
+    task_query = db.query(Task).filter(Task.id == id)
     task = task_query.first()
 
     if task is None:
