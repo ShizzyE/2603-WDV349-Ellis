@@ -1,10 +1,9 @@
 "use client"
 
-import React, { useMemo, useState } from "react"
+import React, { useEffect, useMemo, useState } from "react"
 import Header from "@/components/header"
 
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
-
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
@@ -27,26 +26,22 @@ import {
   Trash2,
 } from "lucide-react"
 
+import {
+  getTasks,
+  createTask,
+  updateTask,
+  deleteTask as deleteTaskApi,
+  convertTask,
+  type FrontendTask,
+} from "@/lib/task-api"
+
 type Priority = "High" | "Medium" | "Low"
 
 type Status = "Not Started" | "In Progress" | "Delayed" | "Completed"
 
 type Label = "School" | "Work" | "Personal" | "Faith" | "Business"
 
-type Task = {
-  id: number
-  title: string
-  description: string
-  priority: Priority
-  label: Label
-  dueDate: string
-  status: Status
-  startDate: string
-  notes: string
-  createdAt: string
-  updatedAt: string
-  completedAt?: string
-}
+type Task = FrontendTask
 
 function getTimeRemaining(date: string) {
   const dueDate = new Date(`${date}T23:59:59`)
@@ -120,8 +115,8 @@ function TaskCard({
       }`}
     >
       <CardHeader>
-        <div className="flex items-start justify-between">
-          <div className="flex gap-2">
+        <div className="flex items-center justify-between">
+          <div className="flex items-center gap-2">
             <Badge variant={getPriorityVariant(task.priority)}>
               {task.priority}
             </Badge>
@@ -197,10 +192,18 @@ function TaskCard({
 export default function Planning() {
   const [tasks, setTasks] = useState<Task[]>([])
 
+  const [loading, setLoading] = useState(true)
+
+  const [error, setError] = useState("")
+
   const [search, setSearch] = useState("")
+
   const [priorityFilter, setPriorityFilter] = useState("all")
+
   const [labelFilter, setLabelFilter] = useState("all")
+
   const [statusFilter, setStatusFilter] = useState("all")
+
   const [sortBy, setSortBy] = useState("dueDate")
 
   const [showForm, setShowForm] = useState(false)
@@ -218,6 +221,27 @@ export default function Planning() {
     notes: "",
   })
 
+  /*LOAD TASKS FROM FASTAPI*/
+  useEffect(() => {
+    async function loadTasks() {
+      try {
+        setLoading(true)
+        setError("")
+
+        const data = await getTasks()
+
+        setTasks(data.map(convertTask))
+      } catch (error) {
+        console.error(error)
+        setError("Unable to load tasks.")
+      } finally {
+        setLoading(false)
+      }
+    }
+
+    loadTasks()
+  }, [])
+
   function resetForm() {
     setNewTask({
       title: "",
@@ -233,10 +257,21 @@ export default function Planning() {
     setEditingTask(null)
   }
 
-  function deleteTask(id: number) {
-    setTasks((current) => current.filter((task) => task.id !== id))
+  /* DELETE TASK FROM DATABASE */
+  async function deleteTask(id: number) {
+    try {
+      setError("")
+
+      await deleteTaskApi(id)
+
+      setTasks((current) => current.filter((task) => task.id !== id))
+    } catch (error) {
+      console.error(error)
+      setError("Unable to delete task.")
+    }
   }
 
+  /* OPEN EDIT FORM */
   function editTask(task: Task) {
     setEditingTask(task)
 
@@ -254,7 +289,8 @@ export default function Planning() {
     setShowForm(true)
   }
 
-  function handleCreateTask(event: React.FormEvent) {
+  /* CREATE OR UPDATE TASK */
+  async function handleCreateTask(event: React.FormEvent) {
     event.preventDefault()
 
     if (
@@ -265,43 +301,46 @@ export default function Planning() {
       return
     }
 
-    const now = new Date().toISOString()
+    try {
+      setError("")
 
-    const task: Task = {
-      id: editingTask ? editingTask.id : Date.now(),
+      const taskData = {
+        title: newTask.title.trim(),
+        description: newTask.description.trim(),
+        notes: newTask.notes.trim(),
+        priority: newTask.priority,
+        label: newTask.label,
+        due_date: newTask.dueDate,
+        status: newTask.status,
+        start_date: newTask.startDate || newTask.dueDate,
+      }
 
-      title: newTask.title.trim(),
+      console.log("Task Data:", taskData) // Debugging line
 
-      description: newTask.description.trim(),
+      /* UPDATE EXISTING TASK */
+      if (editingTask) {
+        const updated = await updateTask(editingTask.id, taskData)
 
-      priority: newTask.priority,
+        setTasks((current) =>
+          current.map((item) =>
+            item.id === editingTask.id ? convertTask(updated) : item
+          )
+        )
+      } else {
+        /*
+         * CREATE NEW TASK
+         */
+        const created = await createTask(taskData)
 
-      label: newTask.label,
+        setTasks((current) => [...current, convertTask(created)])
+      }
 
-      dueDate: newTask.dueDate,
-
-      status: newTask.status,
-
-      startDate: newTask.startDate || newTask.dueDate,
-      
-      notes: newTask.notes.trim(),
-
-      createdAt: editingTask ? editingTask.createdAt : now,
-
-      updatedAt: now,
+      resetForm()
+      setShowForm(false)
+    } catch (error) {
+      console.error(error)
+      setError("Unable to save task.")
     }
-
-    if (editingTask) {
-      setTasks((current) =>
-        current.map((item) => (item.id === editingTask.id ? task : item))
-      )
-    } else {
-      setTasks((current) => [...current, task])
-    }
-
-    resetForm()
-
-    setShowForm(false)
   }
 
   const labels = ["School", "Work", "Personal", "Faith", "Business"]
@@ -330,9 +369,7 @@ export default function Planning() {
       if (sortBy === "priority") {
         const order = {
           High: 1,
-
           Medium: 2,
-
           Low: 3,
         }
 
@@ -346,8 +383,9 @@ export default function Planning() {
       return new Date(a.dueDate).getTime() - new Date(b.dueDate).getTime()
     })
   }, [tasks, search, priorityFilter, labelFilter, statusFilter, sortBy])
+
   return (
-    <div className="min-h-screen">
+    <div>
       <Header title="Planning" />
 
       <main className="flex flex-col gap-8 p-4 sm:p-6 lg:p-8">
@@ -364,15 +402,27 @@ export default function Planning() {
 
           <Button
             onClick={() => {
-              setEditingTask(null)
-              resetForm()
-              setShowForm(!showForm)
+              if (showForm) {
+                setShowForm(false)
+                resetForm()
+              } else {
+                resetForm()
+                setShowForm(true)
+              }
             }}
           >
             <Plus className="mr-2 h-4 w-4" />
             New Task
           </Button>
         </div>
+
+        {/* Error */}
+
+        {error && (
+          <div className="rounded-md border border-destructive/40 bg-destructive/10 p-4 text-sm text-destructive">
+            {error}
+          </div>
+        )}
 
         {/* Create/Edit Task */}
 
@@ -394,7 +444,6 @@ export default function Planning() {
                       onChange={(e) =>
                         setNewTask({
                           ...newTask,
-
                           title: e.target.value,
                         })
                       }
@@ -409,7 +458,6 @@ export default function Planning() {
                       onValueChange={(value) =>
                         setNewTask({
                           ...newTask,
-
                           label: value as Label,
                         })
                       }
@@ -439,7 +487,6 @@ export default function Planning() {
                     onChange={(e) =>
                       setNewTask({
                         ...newTask,
-
                         description: e.target.value,
                       })
                     }
@@ -455,7 +502,6 @@ export default function Planning() {
                       onValueChange={(value) =>
                         setNewTask({
                           ...newTask,
-
                           priority: value as Priority,
                         })
                       }
@@ -482,7 +528,6 @@ export default function Planning() {
                       onValueChange={(value) =>
                         setNewTask({
                           ...newTask,
-
                           status: value as Status,
                         })
                       }
@@ -513,12 +558,26 @@ export default function Planning() {
                       onChange={(e) =>
                         setNewTask({
                           ...newTask,
-
                           dueDate: e.target.value,
                         })
                       }
                     />
                   </div>
+                </div>
+
+                <div>
+                  <label className="text-sm font-medium">Start Date</label>
+
+                  <Input
+                    type="date"
+                    value={newTask.startDate}
+                    onChange={(e) =>
+                      setNewTask({
+                        ...newTask,
+                        startDate: e.target.value,
+                      })
+                    }
+                  />
                 </div>
 
                 <div className="space-y-2">
@@ -530,7 +589,6 @@ export default function Planning() {
                     onChange={(e) =>
                       setNewTask({
                         ...newTask,
-
                         notes: e.target.value,
                       })
                     }
@@ -549,7 +607,7 @@ export default function Planning() {
                     Cancel
                   </Button>
 
-                  <Button type="submit">
+                  <Button type="submit" disabled={loading}>
                     {editingTask ? "Update Task" : "Create Task"}
                   </Button>
                 </div>
@@ -650,11 +708,17 @@ export default function Planning() {
             <h2 className="text-2xl font-bold">Tasks</h2>
 
             <p className="text-sm text-muted-foreground">
-              {filteredTasks.length} tasks
+              {loading ? "Loading..." : `${filteredTasks.length} tasks`}
             </p>
           </div>
 
-          {filteredTasks.length === 0 ? (
+          {loading ? (
+            <Card>
+              <CardContent className="flex min-h-[200px] items-center justify-center">
+                <p className="text-muted-foreground">Loading tasks...</p>
+              </CardContent>
+            </Card>
+          ) : filteredTasks.length === 0 ? (
             <Card>
               <CardContent className="flex min-h-[200px] items-center justify-center">
                 <p className="text-muted-foreground">No tasks created yet.</p>
