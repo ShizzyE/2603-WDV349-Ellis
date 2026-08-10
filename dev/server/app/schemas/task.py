@@ -1,6 +1,7 @@
-from pydantic import BaseModel
 from datetime import date, datetime
 from typing import Optional
+
+from pydantic import BaseModel
 
 
 class TaskBase(BaseModel):
@@ -9,15 +10,20 @@ class TaskBase(BaseModel):
     notes: str
     priority: str
     label: str
-    due_date: str
+    due_date: date
     status: str
     start_date: date
-    updated_at: Optional[datetime] = None
-    completed_at: Optional[datetime] = None
-
-    class Config:
-        from_attributes = True
 
 
 class CreateTask(TaskBase):
     pass
+
+
+class TaskResponse(TaskBase):
+    id: int
+    updated_at: Optional[datetime] = None
+    completed_at: Optional[datetime] = None
+    created_at: Optional[datetime] = None
+
+    class Config:
+        from_attributes = True

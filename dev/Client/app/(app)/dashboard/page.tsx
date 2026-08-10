@@ -1,6 +1,6 @@
 "use client"
 
-import React, { useState } from "react"
+import React, { useEffect, useMemo, useState } from "react"
 import Header from "@/components/header"
 
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
@@ -19,70 +19,20 @@ import {
 
 import { Calendar, Trash2 } from "lucide-react"
 
+import {
+  getTasks,
+  updateTask,
+  deleteTask as deleteTaskApi,
+  type ApiTask,
+} from "@/lib/task-api"
+
 type Priority = "High" | "Medium" | "Low"
 
 type Status = "Not Started" | "In Progress" | "Delayed" | "Completed"
 
 type Label = "School" | "Work" | "Personal" | "Faith" | "Business"
 
-type Task = {
-  id: number
-  title: string
-  description: string
-  priority: Priority
-  label: Label
-  dueDate: string
-  status: Status
-  startDate: string
-  notes: string
-  createdAt: string
-  updatedAt: string
-  completedAt?: string
-}
-
-const initialTasks: Task[] = [
-  {
-    id: 1,
-    title: "Complete React Dashboard",
-    description: "Finish dashboard layout and responsive design.",
-    priority: "High",
-    label: "School",
-    dueDate: "2026-08-11",
-    status: "In Progress",
-    startDate: "2026-08-07",
-    notes: "",
-    createdAt: "",
-    updatedAt: "",
-  },
-
-  {
-    id: 2,
-    title: "Finish Assignment",
-    description: "Complete remaining project requirements.",
-    priority: "Medium",
-    label: "School",
-    dueDate: "2026-08-11",
-    status: "Not Started",
-    startDate: "2026-08-07",
-    notes: "",
-    createdAt: "",
-    updatedAt: "",
-  },
-
-  {
-    id: 3,
-    title: "Submit Project",
-    description: "Upload final project files.",
-    priority: "Low",
-    label: "School",
-    dueDate: "2026-08-08",
-    status: "Delayed",
-    startDate: "2026-08-07",
-    notes: "",
-    createdAt: "",
-    updatedAt: "",
-  },
-]
+type Task = ApiTask
 
 function getPriorityVariant(priority: Priority) {
   switch (priority) {
@@ -114,8 +64,11 @@ function getStatusVariant(status: Status) {
 }
 
 function getTimeRemaining(date: string) {
-  const dueDate = new Date(`${date}T23:59:59`)
+  if (!date) {
+    return "No due date"
+  }
 
+  const dueDate = new Date(`${date}T23:59:59`)
   const now = new Date()
 
   const difference = dueDate.getTime() - now.getTime()
@@ -139,22 +92,16 @@ function getTimeRemaining(date: string) {
 
 function TaskCard({
   task,
-
   onDelete,
-
   onStatusChange,
-
   overdue = false,
 }: {
   task: Task
-
   onDelete: (id: number) => void
-
   onStatusChange: (id: number, status: Status) => void
-
   overdue?: boolean
 }) {
-  const timeRemaining = getTimeRemaining(task.dueDate)
+  const timeRemaining = getTimeRemaining(task.due_date)
 
   return (
     <Card
@@ -163,9 +110,9 @@ function TaskCard({
       }`}
     >
       <CardHeader>
-        <div className="flex items-start justify-between">
-          <div className="flex gap-2">
-            <Badge variant={getPriorityVariant(task.priority)}>
+        <div className="flex items-center justify-between gap-3">
+          <div className="flex items-center gap-2">
+            <Badge variant={getPriorityVariant(task.priority as Priority)}>
               {task.priority}
             </Badge>
 
@@ -216,7 +163,7 @@ function TaskCard({
               <p className="text-xs text-muted-foreground">Due Date</p>
 
               <p className="text-sm font-medium">
-                {new Date(`${task.dueDate}T00:00:00`).toLocaleDateString()}
+                {new Date(`${task.due_date}T00:00:00`).toLocaleDateString()}
               </p>
             </div>
           </div>
@@ -249,28 +196,91 @@ function TaskCard({
 }
 
 export default function Dashboard() {
-  const [tasks, setTasks] = useState<Task[]>(initialTasks)
+  const [tasks, setTasks] = useState<Task[]>([])
+  const [loading, setLoading] = useState(true)
+  const [error, setError] = useState("")
 
-  function deleteTask(id: number) {
-    setTasks((current) => current.filter((task) => task.id !== id))
+  /*
+   * Load tasks from FastAPI when Dashboard mounts.
+   */
+  useEffect(() => {
+    async function loadTasks() {
+      try {
+        setLoading(true)
+        setError("")
+
+        const data = await getTasks()
+
+        console.log("Dashboard tasks from API:", data)
+
+        setTasks(data)
+      } catch (error) {
+        console.error("Failed to load dashboard tasks:", error)
+
+        setError("Failed to load tasks from the server.")
+      } finally {
+        setLoading(false)
+      }
+    }
+
+    loadTasks()
+  }, [])
+
+  /*
+   * Delete task from database and then
+   * remove it from the Dashboard.
+   */
+  async function deleteTask(id: number) {
+    try {
+      setError("")
+
+      await deleteTaskApi(id)
+
+      setTasks((current) => current.filter((task) => task.id !== id))
+    } catch (error) {
+      console.error("Failed to delete task:", error)
+
+      setError("Failed to delete task.")
+    }
   }
 
-  function updateStatus(id: number, status: Status) {
-    setTasks((current) =>
-      current.map((task) =>
-        task.id === id
-          ? {
-              ...task,
+  /*
+   * Update task status in the database.
+   */
+  async function updateStatus(id: number, status: Status) {
+    const currentTask = tasks.find((task) => task.id === id)
 
-              status,
+    if (!currentTask) {
+      return
+    }
 
-              updatedAt: new Date().toISOString(),
-            }
-          : task
+    try {
+      setError("")
+
+      const updatedTask = await updateTask(id, {
+        title: currentTask.title,
+        description: currentTask.description,
+        notes: currentTask.notes,
+        priority: currentTask.priority,
+        label: currentTask.label,
+        due_date: currentTask.due_date,
+        status,
+        start_date: currentTask.start_date,
+      })
+
+      setTasks((current) =>
+        current.map((task) => (task.id === id ? updatedTask : task))
       )
-    )
+    } catch (error) {
+      console.error("Failed to update task:", error)
+
+      setError("Failed to update task status.")
+    }
   }
 
+  /*
+   * Completed task statistics.
+   */
   const completedTasks = tasks.filter(
     (task) => task.status === "Completed"
   ).length
@@ -279,80 +289,140 @@ export default function Dashboard() {
 
   const progress = totalTasks === 0 ? 0 : (completedTasks / totalTasks) * 100
 
-  const priorityTasks = tasks.filter(
-    (task) => task.priority === "High" && task.status !== "Completed"
-  )
+  /*
+   * All incomplete tasks sorted by priority,
+   * then by due date.
+   *
+   * This means Medium and Low tasks now appear
+   * on the Dashboard too.
+   */
+  const activeTasks = useMemo(() => {
+    const priorityOrder: Record<Priority, number> = {
+      High: 1,
+      Medium: 2,
+      Low: 3,
+    }
 
-  const overdueTasks = tasks.filter((task) => {
-    const today = new Date()
+    return tasks
+      .filter((task) => task.status !== "Completed")
+      .sort((a, b) => {
+        const priorityDifference =
+          priorityOrder[a.priority as Priority] -
+          priorityOrder[b.priority as Priority]
 
-    const due = new Date(`${task.dueDate}T23:59:59`)
+        if (priorityDifference !== 0) {
+          return priorityDifference
+        }
 
-    return due < today && task.status !== "Completed"
-  })
+        return new Date(a.due_date).getTime() - new Date(b.due_date).getTime()
+      })
+  }, [tasks])
+
+  /*
+   * Overdue tasks.
+   */
+  const overdueTasks = useMemo(() => {
+    const now = new Date()
+
+    return tasks.filter((task) => {
+      if (task.status === "Completed") {
+        return false
+      }
+
+      const due = new Date(`${task.due_date}T23:59:59`)
+
+      return due < now
+    })
+  }, [tasks])
 
   return (
-    <div>
-      <Header title="Dashboard" />
-
-      <main className="flex flex-col gap-8 overflow-y-auto p-4 sm:p-6">
-        <Card>
-          <CardHeader>
-            <CardTitle>Completed Tasks</CardTitle>
-          </CardHeader>
-
-          <CardContent className="space-y-3">
-            <div className="flex justify-between text-sm">
-              <span>Progress</span>
-
-              <span>
-                {completedTasks}/{totalTasks}
-              </span>
-            </div>
-
-            <Progress value={progress} />
+    <main className="flex flex-col gap-8 overflow-y-auto p-4 sm:p-6">
+      {error && (
+        <Card className="border-destructive">
+          <CardContent className="pt-6">
+            <p className="text-sm text-destructive">{error}</p>
           </CardContent>
         </Card>
+      )}
 
-        <section>
-          <h2 className="mb-4 text-2xl font-bold">Next: Priority</h2>
+      <Card>
+        <CardHeader>
+          <CardTitle>Completed Tasks</CardTitle>
+        </CardHeader>
 
-          <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-3">
-            {priorityTasks.length === 0 ? (
-              <p className="text-muted-foreground">No priority tasks.</p>
-            ) : (
-              priorityTasks.map((task) => (
-                <TaskCard
-                  key={task.id}
-                  task={task}
-                  onDelete={deleteTask}
-                  onStatusChange={updateStatus}
-                />
-              ))
-            )}
+        <CardContent className="space-y-3">
+          <div className="flex justify-between text-sm">
+            <span>Progress</span>
+
+            <span>
+              {completedTasks}/{totalTasks}
+            </span>
           </div>
-        </section>
 
-        <section>
-          <h2 className="mb-4 text-2xl font-bold">Overdue Tasks</h2>
+          <Progress value={progress} />
+        </CardContent>
+      </Card>
 
-          <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-3">
-            {overdueTasks.length === 0 ? (
-              <p className="text-muted-foreground">No overdue tasks.</p>
-            ) : (
-              overdueTasks.map((task) => (
-                <TaskCard
-                  key={task.id}
-                  task={task}
-                  overdue
-                  onDelete={deleteTask}
-                  onStatusChange={updateStatus}
-                />
-              ))
-            )}
-          </div>
-        </section>
-      </main>
-    </div>
+      {loading ? (
+        <Card>
+          <CardContent className="flex min-h-[200px] items-center justify-center">
+            <p className="text-muted-foreground">Loading tasks...</p>
+          </CardContent>
+        </Card>
+      ) : (
+        <>
+          <section>
+            <div className="mb-4">
+              <h2 className="text-2xl font-bold">Next: Priority</h2>
+
+              <p className="text-sm text-muted-foreground">
+                {activeTasks.length} active tasks
+              </p>
+            </div>
+
+            <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-3">
+              {activeTasks.length === 0 ? (
+                <p className="text-muted-foreground">No active tasks.</p>
+              ) : (
+                activeTasks.map((task) => (
+                  <TaskCard
+                    key={task.id}
+                    task={task}
+                    onDelete={deleteTask}
+                    onStatusChange={updateStatus}
+                  />
+                ))
+              )}
+            </div>
+          </section>
+
+          <section>
+            <div className="mb-4">
+              <h2 className="text-2xl font-bold">Overdue Tasks</h2>
+
+              <p className="text-sm text-muted-foreground">
+                {overdueTasks.length} overdue tasks
+              </p>
+            </div>
+
+            <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-3">
+              {overdueTasks.length === 0 ? (
+                <p className="text-muted-foreground">No overdue tasks.</p>
+              ) : (
+                overdueTasks.map((task) => (
+                  <TaskCard
+                    key={task.id}
+                    task={task}
+                    overdue
+                    onDelete={deleteTask}
+                    onStatusChange={updateStatus}
+                  />
+                ))
+              )}
+            </div>
+          </section>
+        </>
+      )}
+    </main>
   )
 }
