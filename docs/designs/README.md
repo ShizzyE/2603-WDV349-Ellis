@@ -3,7 +3,7 @@
 ### Links
 
 * [Shadcn Custom Preset](https://ui.shadcn.com/create?preset=abkh20)    
-* [Figma Design](https://www.figma.com/design/iYKaqdBH4dXjdePCREeBfY/AI-Chat?node-id=0-1&p=f&m=draw)  
+* [Figma Prototype](https://www.figma.com/design/iYKaqdBH4dXjdePCREeBfY/AI-Chat?node-id=0-1&t=556EKtqWQXlUX9sD-1)  
 
 
 <br>

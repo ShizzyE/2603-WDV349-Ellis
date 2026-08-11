@@ -16,6 +16,10 @@ export default function Login() {
   const [password, setPassword] = React.useState("")
 
   const loginToApp = () => {
+    if (!username || !password) {
+      alert("Please enter both username and password")
+      return
+    } 
     console.log("Account created, redirecting to home page")
     dispatch(logIn(username))
     router.push("/home")
@@ -43,6 +47,7 @@ export default function Login() {
               onChange={(e) => setUsername(e.target.value)}
               placeholder="Username"
               className="rounded-lg border border-foreground/20 bg-background px-4 py-2 outline-none hover:shadow-md focus:shadow-lg"
+              required
             />
 
             <input
@@ -50,6 +55,7 @@ export default function Login() {
               onChange={(e) => setPassword(e.target.value)}
               placeholder="Password"
               className="rounded-lg border border-foreground/20 bg-background px-4 py-2 outline-none hover:shadow-md focus:shadow-lg"
+              required
             />
 
             <button

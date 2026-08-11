@@ -185,9 +185,51 @@ PlanBuddy will integrate the OpenAI API to provide AI powered functionality, inc
 
 
 
+
 Research References:
 [Harvard: "8 Time Management Tips for Students"](https://summer.harvard.edu/blog/8-time-management-tips-for-students/#3-Build-a-Personalized-Schedule)
 
 [TickTick Website](https://ticktick.com/?language=en_us)
 
 [Reddit: "What has been the most useful time management tip in your career?"](https://www.reddit.com/r/labrats/comments/1ex9mvf/what_has_been_the_most_useful_time_management_tip/)
+
+
+---
+
+#Change Order
+
+### Confirm the proposal document summarizes the project scope
+
+**Yes.** The proposal accurately summarizes the overall scope of the PlanBuddy project, including its purpose, target audience, features, use cases, and business objectives.
+
+### Work Left in Project
+
+Approximately **50–60%** of the project remains.
+
+Completed work includes:
+- Initial frontend setup
+- Initial backend setup
+- Dashboard layout
+- Navigation and UI foundation
+- Project architecture
+
+Remaining work includes:
+- Complete CRUD functionality
+- Database integration with PostgreSQL and Prisma
+- OpenAI API integration
+- User authentication
+- Calendar improvements
+- AI task recommendations
+- Testing and debugging
+- Deployment
+
+### Proposed changes to the original project scope
+
+The core scope of PlanBuddy remains the same. However, a few refinements have been identified during development:
+
+- Improve the AI assistant by providing smarter task prioritization and productivity recommendations.
+- Expand the calendar functionality with improved task scheduling.
+- Improve the overall user interface using modern responsive design principles.
+- Focus development on delivering a polished and reliable core application before considering advanced features such as team collaboration or habit tracking.
+
+These changes refine the existing scope rather than significantly expanding it and are intended to improve usability while keeping the project achievable.

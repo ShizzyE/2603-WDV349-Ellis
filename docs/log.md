@@ -27,9 +27,7 @@ So the past week I have enhanced my frontend UI, added Redux as state management
 
 ### Week 4
 
-Stay tuned for this weeks summary...
-
-
+For the final week I focused on cleaning up my project structure and getting everything ready for deployment. One of the biggest challenges I faced was time management along with creating a clickable design in Figma, since it was my first time ever doing that. It took some trial and error to understand how to turn my ideas into something interactive and presentable. One of my biggest accomplishments this week was gaining a better understanding of deployment and how everything comes together in a production environment. It helped me feel more confident about preparing my project for real users. For the remainder of the project, my main focus is finalizing everything and making sure all parts of the application are complete and working by next week.
 
 
 
