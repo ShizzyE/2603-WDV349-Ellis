@@ -80,7 +80,7 @@ def login(
         data={
             "sub": str(user.id)
         },
-        expires_delta=timedelta(minutes=60)
+        expires_delta=timedelta(hour=24)
     )
 
     return {

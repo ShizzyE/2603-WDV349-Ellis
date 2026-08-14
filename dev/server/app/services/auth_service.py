@@ -12,7 +12,7 @@ from app.models.user import User
 
 SECRET_KEY = "shizzy's super secret key lol"
 ALGORITHM = "HS256"
-ACCESS_TOKEN_EXPIRE_MINUTES = 120
+ACCESS_TOKEN_EXPIRE_MINUTES = 24 * 60
 
 oauth2_scheme = OAuth2PasswordBearer(
     tokenUrl="/auth/login"
