@@ -26,7 +26,10 @@ export async function registerUser(
   return data
 }
 
-export async function loginUser(email: string, password: string) {
+export async function loginUser(
+  email: string,
+  password: string
+) {
   const body = new URLSearchParams()
 
   body.append("username", email)
@@ -57,6 +60,7 @@ export async function getCurrentUser() {
   }
 
   const response = await fetch(`${API_URL}/auth/me`, {
+    method: "GET",
     headers: {
       Authorization: `Bearer ${token}`,
     },
@@ -65,7 +69,9 @@ export async function getCurrentUser() {
   const data = await response.json()
 
   if (!response.ok) {
-    throw new Error(data.detail || "Could not get current user")
+    throw new Error(
+      data.detail || "Could not get current user"
+    )
   }
 
   return data
@@ -74,5 +80,3 @@ export async function getCurrentUser() {
 export function logoutUser() {
   localStorage.removeItem("access_token")
 }
-
-

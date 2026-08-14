@@ -1,47 +1,51 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit"
-import { LogOut } from "lucide-react"
-import { log } from "node:console"
 
 type InitialState = {
   value: AuthState
 }
 
-type AuthState = {
+export type AuthState = {
   isAuth: boolean
+  id: number | null
   username: string
-  uid: string
+  email: string
   isModerator: boolean
 }
 
-/* This  */
-const initialState = {
+type LoginPayload = {
+  id: number
+  username: string
+  email: string
+}
+
+const initialState: InitialState = {
   value: {
     isAuth: false,
+    id: null,
     username: "",
-    uid: "",
+    email: "",
     isModerator: false,
-  } as AuthState,
-} as InitialState
+  },
+}
 
 export const auth = createSlice({
   name: "auth",
   initialState,
-  reducers: { /* A function that takes in a action */
+
+  reducers: {
     logOut: () => {
-        return initialState;
+      return initialState
     },
-    logIn: (state, action: PayloadAction<string>) => {
-        return {
-            value: {
-                isAuth: true,
-                username: action.payload,
-                uid: "1234567890",
-                isModerator: false,
-            },
-        };
+
+    logIn: (state, action: PayloadAction<LoginPayload>) => {
+      state.value.isAuth = true
+      state.value.id = action.payload.id
+      state.value.username = action.payload.username
+      state.value.email = action.payload.email
     },
   },
 })
 
 export const { logOut, logIn } = auth.actions
+
 export default auth.reducer

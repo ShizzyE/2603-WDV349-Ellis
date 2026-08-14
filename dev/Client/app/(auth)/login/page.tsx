@@ -6,7 +6,10 @@ import { motion } from "framer-motion"
 import { logIn } from "@/redux/features/auth-slice"
 import { useDispatch } from "react-redux"
 import { AppDispatch } from "@/redux/store"
-import { loginUser } from "@/lib/user-api"
+import {
+  loginUser,
+  getCurrentUser,
+} from "@/lib/user-api"
 
 export default function Login() {
   const router = useRouter()
@@ -22,21 +25,33 @@ export default function Login() {
     }
 
     try {
-      // Send login request to FastAPI
+      // Login
       const data = await loginUser(email, password)
 
-      // Store JWT authentication token
+      // Store JWT
       localStorage.setItem(
         "access_token",
         data.access_token
       )
 
-      // Update Redux authentication state
-      dispatch(logIn(email))
+      // Get logged-in user from FastAPI
+      const currentUser = await getCurrentUser()
 
-      console.log("Login successful, redirecting to home page")
+      console.log("CURRENT USER:", currentUser)
 
-      // Redirect to Dashboard
+      // Store user in Redux
+      dispatch(
+        logIn({
+          id: currentUser.id,
+          username: currentUser.username,
+          email: currentUser.email,
+        })
+      )
+
+      console.log(
+        "Login successful, redirecting to dashboard"
+      )
+
       router.push("/dashboard")
     } catch (error) {
       console.error("Login error:", error)
@@ -57,12 +72,10 @@ export default function Login() {
     <div className="flex min-h-svh items-center justify-center p-6">
       <div className="flex max-w-md min-w-0 flex-col gap-4 text-sm leading-loose">
 
-        {/* Brand title OUTSIDE the form */}
         <h1 className="text-center text-3xl font-bold">
           PlanBuddy
         </h1>
 
-        {/* Window-style form container */}
         <div className="w-100 rounded-xl border border-foreground bg-background p-8">
 
           <h2 className="mb-6 text-center text-2xl font-semibold">
@@ -71,7 +84,6 @@ export default function Login() {
 
           <form className="flex flex-col gap-4">
 
-            {/* Email */}
             <input
               type="email"
               value={email}
@@ -81,7 +93,6 @@ export default function Login() {
               required
             />
 
-            {/* Password */}
             <input
               type="password"
               value={password}
@@ -91,7 +102,6 @@ export default function Login() {
               required
             />
 
-            {/* Login */}
             <button
               type="button"
               onClick={loginToApp}
@@ -100,7 +110,6 @@ export default function Login() {
               Login
             </button>
 
-            {/* Sign Up */}
             <motion.button
               type="button"
               onClick={redirectToSignUp}
@@ -111,7 +120,6 @@ export default function Login() {
               Sign Up ?
             </motion.button>
 
-            {/* Divider */}
             <div className="flex items-center gap-3 py-2">
               <div className="h-px flex-1 bg-foreground/20" />
 
@@ -122,7 +130,6 @@ export default function Login() {
               <div className="h-px flex-1 bg-foreground/20" />
             </div>
 
-            {/* Google OAuth - Coming Later */}
             <button
               type="button"
               className="flex cursor-pointer items-center justify-center rounded-lg border border-foreground py-2 hover:shadow-md"
