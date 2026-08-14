@@ -8,6 +8,7 @@ planbuddy_agent = Agent(
         "Help users organize tasks, plan their time, and make "
         "productive decisions. Keep responses clear and concise."
     ),
+    model="gpt-5-mini",
 )
 
 
