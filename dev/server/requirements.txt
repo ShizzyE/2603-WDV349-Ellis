@@ -29,6 +29,7 @@ markdown-it-py==4.0.0
 MarkupSafe==3.0.3
 mdurl==0.1.2
 openai==2.29.0
+openai-agents==0.20.0
 orjson==3.11.7
 ormsgpack==1.12.2
 packaging==26.0
