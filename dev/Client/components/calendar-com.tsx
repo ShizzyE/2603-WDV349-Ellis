@@ -37,13 +37,29 @@ export default function CalendarCom() {
     async function fetchTasks() {
       try {
         setLoading(true)
+        setError(null)
 
-        const response = await fetch("http://localhost:8000/tasks", {
+        // Get JWT token from localStorage
+        const token = localStorage.getItem("access_token")
+
+        // Make sure the user is logged in
+        if (!token) {
+          throw new Error("You are not logged in.")
+        }
+
+        // Request only the current user's tasks
+        const response = await fetch("http://localhost:8000/tasks/", {
           method: "GET",
-          credentials: "include",
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
         })
 
         if (!response.ok) {
+          if (response.status === 401) {
+            throw new Error("Your session has expired. Please log in again.")
+          }
+
           throw new Error("Failed to fetch tasks")
         }
 
@@ -54,7 +70,8 @@ export default function CalendarCom() {
         setTasks(data)
       } catch (err) {
         console.error(err)
-        setError("Unable to load tasks.")
+
+        setError(err instanceof Error ? err.message : "Unable to load tasks.")
       } finally {
         setLoading(false)
       }

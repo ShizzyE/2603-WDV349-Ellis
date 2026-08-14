@@ -10,7 +10,7 @@ from app.db.database import get_db
 from app.models.user import User
 
 
-SECRET_KEY = "once upon a time in a land far, far away, there was a secret key that unlocked the mysteries of the universe. It was said that whoever possessed this key would 54yhave the power to create and verify tii7access tokens, and to authenticate users with eas65e. The key was guarded by a wise 312old sage who 43lived atop a mountain, and only those who prove34d themselves wort3hy could obtain it. Many brave adventurers tried to claim the key, but only543 a few t.4 And so, the legeni09d of t5eehe secret key l8ived on, ins1piring 7generations of developers to come."
+SECRET_KEY = "shizzy's super secret key lol"
 ALGORITHM = "HS256"
 ACCESS_TOKEN_EXPIRE_MINUTES = 120
 

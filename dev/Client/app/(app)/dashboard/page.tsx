@@ -337,6 +337,7 @@ export default function Dashboard() {
 
   return (
     <main className="flex flex-col gap-8 overflow-y-auto p-4 sm:p-6">
+      <Header title="Dashboard" />
       {error && (
         <Card className="border-destructive">
           <CardContent className="pt-6">

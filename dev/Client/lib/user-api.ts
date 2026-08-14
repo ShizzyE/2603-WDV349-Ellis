@@ -74,3 +74,5 @@ export async function getCurrentUser() {
 export function logoutUser() {
   localStorage.removeItem("access_token")
 }
+
+
