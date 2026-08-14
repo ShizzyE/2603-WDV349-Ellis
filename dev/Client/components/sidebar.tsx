@@ -11,14 +11,28 @@ import {
   Menu,
   Bot,
   X,
+  User,
+  Smile,
+  Ghost,
+  Cat,
+  Dog,
+  Star,
 } from "lucide-react"
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
+import { Avatar, AvatarFallback } from "@/components/ui/avatar"
 import { Card } from "@/components/ui/card"
 import { useAppSelector } from "@/redux/store"
+
+const profileIcons = [User, Smile, Ghost, Cat, Dog, Star]
 
 export default function Sidebar() {
   const user = useAppSelector((state) => state.auth.value)
   const [open, setOpen] = useState(false)
+
+  // Give user random icon based on their username
+  const ProfileIcon =
+    profileIcons[
+      user.username ? user.username.charCodeAt(0) % profileIcons.length : 0
+    ]
 
   return (
     <>
@@ -40,7 +54,9 @@ export default function Sidebar() {
       )}
 
       <aside
-        className={`fixed top-0 left-0 z-50 flex h-screen w-64 transform flex-col border-r border-border bg-sidebar p-6 text-foreground transition-transform duration-300 ${open ? "translate-x-0" : "-translate-x-full"} md:static md:flex md:translate-x-0`}
+        className={`fixed top-0 left-0 z-50 flex h-screen w-64 transform flex-col border-r border-border bg-sidebar p-6 text-foreground transition-transform duration-300 ${
+          open ? "translate-x-0" : "-translate-x-full"
+        } md:static md:flex md:translate-x-0`}
       >
         {/* Mobile Close Button */}
         <div className="mb-6 flex justify-end md:hidden">
@@ -63,7 +79,7 @@ export default function Sidebar() {
             Dashboard
           </Link>
 
-           <Link
+          <Link
             href="/dashboard/ask-ai"
             onClick={() => setOpen(false)}
             className="flex items-center gap-2 rounded-lg p-2 transition hover:bg-white/10 hover:shadow-lg md:hidden"
@@ -113,14 +129,17 @@ export default function Sidebar() {
         <div className="mt-auto">
           <Card className="flex items-center gap-3 p-3">
             <Avatar>
-              <AvatarImage src="" />
-              <AvatarFallback>
-                {user.isAuth ? user.username.slice(0, 2).toUpperCase() : "GU"}
-              </AvatarFallback>
+              {user.isAuth ? (
+                <div className="flex h-full w-full items-center justify-center">
+                  <ProfileIcon size={22} />
+                </div>
+              ) : (
+                <AvatarFallback>GU</AvatarFallback>
+              )}
             </Avatar>
 
-            <div className="flex flex-col text-sm">
-              <span className="font-semibold">
+            <div className="flex min-w-0 flex-col text-sm">
+              <span className="truncate font-semibold">
                 {user.isAuth ? user.username : "Guest"}
               </span>
 
