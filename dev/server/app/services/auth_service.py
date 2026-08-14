@@ -5,12 +5,14 @@ from jose import JWTError, jwt
 from fastapi import Depends, HTTPException, status
 from fastapi.security import OAuth2PasswordBearer
 from sqlalchemy.orm import Session
+from dotenv import JWT_SECRET_KEY 
+import load_dotenv
 
 from app.db.database import get_db
 from app.models.user import User
 
 
-SECRET_KEY = "shizzy's super secret key lol"
+SECRET_KEY = JWT_SECRET_KEY
 ALGORITHM = "HS256"
 ACCESS_TOKEN_EXPIRE_MINUTES = 24 * 60
 

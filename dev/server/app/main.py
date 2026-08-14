@@ -21,3 +21,4 @@ app.add_middleware(
 app.include_router(users.router, prefix="/users", tags=["Users"])
 app.include_router(tasks.router, prefix="/tasks", tags=["Tasks"])
 app.include_router(auth.router, prefix="/auth", tags=["Authentication"])
+app.include_router(ai.router, prefix="/ai", tags=["AI"])
