@@ -49,4 +49,21 @@ My biggest accomplishment this week was gaining a better understanding of data t
 #### 🔮 Next Steps
 My main priorities next week are getting authentication fully connected and making sure users can properly sign up and log in without creating duplicate data and a specific user only being able to see their tasks. I also want to continue working on the OpenAI implementation and understand how it can be useful within PlanBuddy. Another priority is finding more efficient ways to store, organize, and retrieve data from the database. I want to make sure the frontend, backend, and database are all communicating consistently and efficiently as I add more features, users, and data. I also plan to spend more time testing my API routes and fixing any issues that come up. Next week my goal is to keep building a strong foundation so adding future features becomes easier and more organized.
 
-### Week 2
+
+### Week 2 Log Update
+
+#### ⚙️ Overview
+
+This past week, I focused on continuing the full-stack development of PlanBuddy and building on the frontend and backend connection I established during Week 1. I worked more with the FastAPI backend, database models, API routes, and frontend requests to make sure data could move consistently between the frontend, backend, and database. I also continued working with authentication and user-specific task data, making sure tasks could be connected to the correct user instead of being shared between users. Alongside the backend work, I continued improving the overall functionality and structure of PlanBuddy.
+
+#### 🌵 Challenges
+
+The biggest challenge this week was getting the different parts of the application to work together consistently. I spent a lot of time debugging API requests, database data, authentication, and route behavior because a small change in one part of the application could affect another part. I also had to continue working with Python and FastAPI, which required me to spend time understanding how data models, schemas, routes, and database relationships work together, but I figured it out! Another challenge was making sure the application could properly identify the current user and only retrieve the tasks associated with that user. This helped me better understand how authentication and database relationships need to work together in a real application.
+
+#### 🏆 Accomplishments
+
+My biggest accomplishment this week was getting a better understanding of how the frontend, backend, authentication, and database communicate as one system. I was able to make more progress with user authentication and task data while continuing to test my API routes and fix issues as they appeared. I also continued researching OpenAI and how I could use its API within PlanBuddy. This gave me a better idea of how the future AI features could communicate with the backend instead of exposing API keys directly through the frontend. Overall, I feel more comfortable working with the backend than I did at the beginning of the project, especially when dealing with data types, API requests, and database operations.
+
+#### 🔮 Next Steps
+
+My main priorities moving forward are to continue improving authentication by adding Google OAuth and adjusting some of the UI to make it better. I also want to continue developing the OpenAI implementation and begin turning the API connection into an actual PlanBuddy feature. Another priority is improving how data is stored, organized, and retrieved so the application can continue to scale as more features and users are added. I also plan to keep testing my API routes and fixing any issues that appear as I connect more features together. My overall goal is to continue strengthening the foundation of PlanBuddy so future development is more efficient and organized.
