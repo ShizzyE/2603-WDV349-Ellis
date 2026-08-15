@@ -214,9 +214,10 @@ The backend should reject the OpenAI request and return a controlled error inste
 
 **Actual Result:**
 
-[Write what happened.]
+Error Message: 
+AI request failed: Error code: 401 - {'error': {'message': 'Incorrect API key provided: invalid_key. You can find your API key at https://platform.openai.com/account/api-keys.', 'type': 'invalid_request_error', 'param': None, 'code': 'invalid_api_key'}}
 
-**Status:** Pass / Fail
+**Status:** Pass
 
 ---
 
