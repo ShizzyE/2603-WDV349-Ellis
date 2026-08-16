@@ -1,25 +1,37 @@
 "use client"
-import { Button } from "@/components/ui/button"
-import React, { useEffect, useState } from "react"
+
+import React from "react"
 import { useRouter } from "next/navigation"
-import { logIn, logOut } from "@/redux/features/auth-slice"
-import { useDispatch } from "react-redux"
-import { AppDispatch } from "@/redux/store"
+import { registerUser } from "@/lib/user-api"
 
 export default function Page() {
   const router = useRouter()
-
-  const dispatch = useDispatch<AppDispatch>()
 
   const [username, setUsername] = React.useState("")
   const [email, setEmail] = React.useState("")
   const [password, setPassword] = React.useState("")
 
-  const redirectToHome = () => {
-    console.log("Logged in, redirecting to home page")
+  const createAccount = async () => {
+    if (!username || !email || !password) {
+      alert("Please fill out all fields")
+      return
+    }
 
-    dispatch(logIn(username)) // Update Redux state with username
-    router.push("/home")
+    try {
+      // Send registration request to FastAPI
+      await registerUser(username, email, password)
+
+      console.log("Account created successfully")
+
+      alert("Account created successfully!")
+
+      // Send user to Dashboard page after successful registration
+      router.push("/dashboard")
+    } catch (error) {
+      console.error("Registration error:", error)
+
+      alert(error instanceof Error ? error.message : "Registration failed")
+    }
   }
 
   const redirectToLogin = () => {
@@ -39,52 +51,64 @@ export default function Page() {
           <h2 className="mb-6 text-center text-2xl font-semibold">Sign Up</h2>
 
           <form className="flex flex-col gap-4">
+            {/* Username */}
             <input
               type="text"
+              value={username}
               onChange={(e) => setUsername(e.target.value)}
               placeholder="Username"
               className="rounded-lg border border-foreground/20 bg-background px-4 py-2 outline-none hover:shadow-md focus:shadow-lg"
               required
             />
 
+            {/* Email */}
             <input
               type="email"
+              value={email}
               onChange={(e) => setEmail(e.target.value)}
               placeholder="Email"
               className="rounded-lg border border-foreground/20 bg-background px-4 py-2 outline-none hover:shadow-md focus:shadow-lg"
               required
             />
 
+            {/* Password */}
             <input
               type="password"
+              value={password}
               onChange={(e) => setPassword(e.target.value)}
               placeholder="Password"
               className="rounded-lg border border-foreground/20 bg-background px-4 py-2 outline-none hover:shadow-md focus:shadow-lg"
               required
             />
 
+            {/* Create Account */}
             <button
               type="button"
-              onClick={redirectToHome}
+              onClick={createAccount}
               className="mt-2 cursor-pointer rounded-lg bg-primary py-2 font-medium text-background hover:bg-primary/90 hover:shadow-md"
             >
               Create Account
             </button>
 
+            {/* Divider */}
             <div className="flex items-center gap-3 py-2">
               <div className="h-px flex-1 bg-foreground/20" />
+
               <span className="text-xs text-foreground/60">OR</span>
+
               <div className="h-px flex-1 bg-foreground/20" />
             </div>
 
+            {/* Login */}
             <button
               type="button"
-              className="flex cursor-pointer items-center justify-center rounded-lg border border-foreground py-2 hover:shadow-md"
               onClick={redirectToLogin}
+              className="flex cursor-pointer items-center justify-center rounded-lg border border-foreground py-2 hover:shadow-md"
             >
               Login
             </button>
           </form>
+
           <div className="mt-4 flex items-center justify-center font-mono text-xs text-muted-foreground">
             (Press <kbd className="p-1.5">"d"</kbd> to toggle dark mode)
           </div>

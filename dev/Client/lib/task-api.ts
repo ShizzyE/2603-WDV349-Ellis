@@ -30,6 +30,15 @@ export type FrontendTask = {
   completedAt?: string
 }
 
+function getAuthHeaders() {
+  const token = localStorage.getItem("access_token")
+
+  return {
+    "Content-Type": "application/json",
+    Authorization: `Bearer ${token}`,
+  }
+}
+
 export function convertTask(task: ApiTask): FrontendTask {
   return {
     id: task.id,
@@ -47,8 +56,11 @@ export function convertTask(task: ApiTask): FrontendTask {
   }
 }
 
-export async function getTasks(): Promise<ApiTask[]> {
-  const response = await fetch(`${API_URL}/tasks/`)
+export async function getTasks() {
+  const response = await fetch(`${API_URL}/tasks/`, {
+    method: "GET",
+    headers: getAuthHeaders(),
+  })
 
   if (!response.ok) {
     throw new Error("Failed to fetch tasks")
@@ -57,56 +69,29 @@ export async function getTasks(): Promise<ApiTask[]> {
   return response.json()
 }
 
-export async function createTask(task: {
-  title: string
-  description: string
-  notes: string
-  priority: string
-  label: string
-  due_date: string
-  status: string
-  start_date: string
-}) {
+export async function createTask(task: any) {
   const response = await fetch(`${API_URL}/tasks/`, {
     method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-    },
+    headers: getAuthHeaders(),
     body: JSON.stringify(task),
   })
 
   if (!response.ok) {
-    const error = await response.text()
-    throw new Error(error || "Failed to create task")
+    throw new Error("Failed to create task")
   }
 
   return response.json()
 }
 
-export async function updateTask(
-  id: number,
-  task: {
-    title: string
-    description: string
-    notes: string
-    priority: string
-    label: string
-    due_date: string
-    status: string
-    start_date: string
-  }
-) {
+export async function updateTask(id: number, task: any) {
   const response = await fetch(`${API_URL}/tasks/${id}`, {
     method: "PUT",
-    headers: {
-      "Content-Type": "application/json",
-    },
+    headers: getAuthHeaders(),
     body: JSON.stringify(task),
   })
 
   if (!response.ok) {
-    const error = await response.text()
-    throw new Error(error || "Failed to update task")
+    throw new Error("Failed to update task")
   }
 
   return response.json()
@@ -115,6 +100,7 @@ export async function updateTask(
 export async function deleteTask(id: number) {
   const response = await fetch(`${API_URL}/tasks/${id}`, {
     method: "DELETE",
+    headers: getAuthHeaders(),
   })
 
   if (!response.ok) {

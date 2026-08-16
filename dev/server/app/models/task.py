@@ -1,22 +1,64 @@
 from app.db.database import Base
-from sqlalchemy import Column, Integer, String, TIMESTAMP, Date, text
+
+from sqlalchemy import (Column, Integer, String, TIMESTAMP, Date, ForeignKey, text)
 
 
 class Task(Base):
     __tablename__ = "tasks"
 
-    id = Column(Integer, primary_key=True, nullable=False)
+    id = Column(
+        Integer,
+        primary_key=True,
+        nullable=False
+    )
 
-    title = Column(String, nullable=False)
-    description = Column(String, nullable=False)
-    notes = Column(String, nullable=False)
-    priority = Column(String, nullable=False)
-    label = Column(String, nullable=False)
+    # The user who owns this task
+    user_id = Column(
+        Integer,
+        ForeignKey("users.id"),
+        nullable=False,
+        index=True
+    )
 
-    due_date = Column(Date, nullable=False)
-    start_date = Column(Date, nullable=False)
+    title = Column(
+        String,
+        nullable=False
+    )
 
-    status = Column(String, nullable=False)
+    description = Column(
+        String,
+        nullable=False
+    )
+
+    notes = Column(
+        String,
+        nullable=False
+    )
+
+    priority = Column(
+        String,
+        nullable=False
+    )
+
+    label = Column(
+        String,
+        nullable=False
+    )
+
+    due_date = Column(
+        Date,
+        nullable=False
+    )
+
+    start_date = Column(
+        Date,
+        nullable=False
+    )
+
+    status = Column(
+        String,
+        nullable=False
+    )
 
     updated_at = Column(
         TIMESTAMP(timezone=True),
