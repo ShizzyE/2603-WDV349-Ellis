@@ -43,30 +43,18 @@ Label = Literal[
 def create_task(
     ctx: RunContextWrapper[PlanBuddyContext],
     title: str,
+    due_date: str,
+    start_date: str,
     description: str = "",
     notes: str = "",
     priority: Priority = "Medium",
     label: Label = "Personal",
-    due_date: str = "",
-    start_date: str = "",
     status: Status = "Not Started",
 ):
     """Create a new PlanBuddy task for the authenticated user."""
 
     db = ctx.context.db
     user_id = ctx.context.user_id
-
-    print("\nCreating task:")
-    print(f"User ID: {user_id}")
-    print(f"Title: {title}")
-    print(f"Description: {description}")
-    print(f"Notes: {notes}")
-    print(f"Priority: {priority}")
-    print(f"Label: {label}")
-    print(f"Start date: {start_date}")
-    print(f"Due date: {due_date}")
-    print(f"Status: {status}")
-    print()
 
     task = Task(
         user_id=user_id,
@@ -274,9 +262,6 @@ planbuddy_agent = Agent(
 
         "When interpreting relative dates, use the current date "
         "as the reference point. "
-        "Today is 2026-08-19. "
-        "'Tomorrow' means 2026-08-20. "
-        "'Next Friday' means 2026-08-28. "
         "Do not interpret 'next Friday' as the upcoming Friday. "
 
         "When scheduling tasks, only use dates for the start_date "
