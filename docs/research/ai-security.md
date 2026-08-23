@@ -121,3 +121,7 @@ PlanBuddy should follow least privilege, enforce authorization outside of the AI
 
 [GenAI OWASP Security](https://genai.owasp.org/llmrisk/llm01-prompt-injection/?utm_source=chatgpt.com)
 
+[IBM Prompt Injection Blog](https://www.ibm.com/think/topics/prompt-injection)
+
+[Medium: 8 Core Constraints for Building Production-Grade AI Agents](https://medium.com/@talweezy/8-core-constraints-for-building-production-grade-ai-agents-66bc5494f02a)
+
