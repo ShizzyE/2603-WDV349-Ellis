@@ -67,3 +67,17 @@ My biggest accomplishment this week was getting a better understanding of how th
 #### 🔮 Next Steps
 
 My main priorities moving forward are to continue improving authentication by adding Google OAuth and adjusting some of the UI to make it better. I also want to continue developing the OpenAI implementation and begin turning the API connection into an actual PlanBuddy feature. Another priority is improving how data is stored, organized, and retrieved so the application can continue to scale as more features and users are added. I also plan to keep testing my API routes and fixing any issues that appear as I connect more features together. My overall goal is to continue strengthening the foundation of PlanBuddy so future development is more efficient and organized.
+
+
+### Week 3 Log Update
+
+#### ⚙️ Overview
+
+
+#### 🌵 Challenges
+
+
+#### 🏆 Accomplishments
+
+
+#### 🔮 Next Steps
