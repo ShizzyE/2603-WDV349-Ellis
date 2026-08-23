@@ -1,6 +1,10 @@
-from fastapi import APIRouter, HTTPException
+from fastapi import APIRouter, HTTPException, Depends
 from pydantic import BaseModel
+from sqlalchemy.orm import Session
 
+from app.db.database import get_db
+from app.models.user import User
+from app.services.auth_service import get_current_user
 from app.services.ai_service import run_planbuddy_agent
 
 
@@ -16,9 +20,17 @@ class AIResponse(BaseModel):
 
 
 @router.post("/chat", response_model=AIResponse)
-async def chat_with_planbuddy(request: AIRequest):
+async def chat_with_planbuddy(
+    request: AIRequest,
+    db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_user)
+):
     try:
-        response = await run_planbuddy_agent(request.message)
+        response = await run_planbuddy_agent(
+            request.message,
+            db,
+            current_user
+        )
 
         return AIResponse(
             response=response
