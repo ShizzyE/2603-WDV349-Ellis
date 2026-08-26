@@ -32,7 +32,6 @@ export default function SettingsPage() {
     })
   }
 
-
   // Keyboard shortcut: Press D
   useEffect(() => {
     const handleKey = (e: KeyboardEvent) => {
@@ -47,7 +46,6 @@ export default function SettingsPage() {
       window.removeEventListener("keydown", handleKey)
     }
   }, [])
-
 
   const saveChanges = () => {
     console.log({
@@ -102,7 +100,7 @@ export default function SettingsPage() {
 
           <div className="flex flex-col gap-2">
             <Label>
-              Username
+              Change Username
             </Label>
 
             <Input
@@ -116,7 +114,7 @@ export default function SettingsPage() {
 
           <div className="flex flex-col gap-2">
             <Label>
-              Password
+              Change Password
             </Label>
 
             <div className="relative">

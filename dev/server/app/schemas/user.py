@@ -10,6 +10,11 @@ class CreateUser(UserBase):
     password: str
 
 
+class UpdateUser(BaseModel):
+    username: str | None = None
+    password: str | None = None
+
+
 class UserResponse(UserBase):
     id: int
     auth_provider: str
