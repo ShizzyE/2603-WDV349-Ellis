@@ -6,8 +6,7 @@ from sqlalchemy.orm import Session
 
 from app.db.database import get_db
 from app.models.user import User
-from app.schemas.user import CreateUser, UserResponse
-
+from app.schemas.user import CreateUser, UpdateUser, UserResponse
 from app.services.auth_service import (
     authenticate_user,
     create_access_token,
@@ -19,12 +18,15 @@ from app.services.auth_service import (
 router = APIRouter()
 
 
-@router.post("/register", response_model=UserResponse, status_code=status.HTTP_201_CREATED)
+@router.post(
+    "/register",
+    response_model=UserResponse,
+    status_code=status.HTTP_201_CREATED
+)
 def register(
     user: CreateUser,
     db: Session = Depends(get_db)
 ):
-
     existing_user = (
         db.query(User)
         .filter(User.email == user.email)
@@ -37,9 +39,7 @@ def register(
             detail="Email is already registered."
         )
 
-    hashed_password = hash_password(
-        user.password
-    )
+    hashed_password = hash_password(user.password)
 
     new_user = User(
         username=user.username,
@@ -60,8 +60,6 @@ def login(
     form_data: OAuth2PasswordRequestForm = Depends(),
     db: Session = Depends(get_db)
 ):
-
-#test
     user = authenticate_user(
         db,
         form_data.username,
@@ -94,4 +92,40 @@ def login(
 def get_me(
     current_user: User = Depends(get_current_user)
 ):
+    return current_user
+
+
+@router.put("/me", response_model=UserResponse)
+def update_me(
+    updated: UpdateUser,
+    current_user: User = Depends(get_current_user),
+    db: Session = Depends(get_db)
+):
+    # Update username if provided
+    if updated.username is not None:
+        username = updated.username.strip()
+
+        if not username:
+            raise HTTPException(
+                status_code=status.HTTP_400_BAD_REQUEST,
+                detail="Username cannot be empty."
+            )
+
+        current_user.username = username
+
+    # Update password if provided
+    if updated.password is not None:
+        if len(updated.password) < 8:
+            raise HTTPException(
+                status_code=status.HTTP_400_BAD_REQUEST,
+                detail="Password must be at least 8 characters."
+            )
+
+        current_user.password_hash = hash_password(
+            updated.password
+        )
+
+    db.commit()
+    db.refresh(current_user)
+
     return current_user

@@ -15,6 +15,11 @@ class UpdateUser(BaseModel):
     password: str | None = None
 
 
+class ChangePassword(BaseModel):
+    current_password: str
+    new_password: str
+
+
 class UserResponse(UserBase):
     id: int
     auth_provider: str

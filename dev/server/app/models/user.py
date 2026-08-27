@@ -20,7 +20,8 @@ class User(Base):
 
     username = Column(
         String,
-        nullable=False
+        nullable=False,
+        unique=True
     )
 
     email = Column(
