@@ -252,7 +252,7 @@ export default function CalendarCom() {
           onClick={closeTaskView}
         >
           <div
-            className="relative w-full max-w-lg rounded-xl border bg-background p-6 shadow-2xl"
+            className="relative max-h-[90vh] w-full max-w-lg overflow-y-auto rounded-xl border bg-background p-6 shadow-2xl"
             onClick={(event) => event.stopPropagation()}
           >
             {/* Close X */}
