@@ -38,7 +38,6 @@ Label = Literal[
 
 # CREATE TASK TOOL
 # =====
-
 @function_tool
 def create_task(
     ctx: RunContextWrapper[PlanBuddyContext],
@@ -73,22 +72,21 @@ def create_task(
     db.refresh(task)
 
     return (
-        f"Task created successfully:\n"
-        f"ID: {task.id}\n"
-        f"Title: {task.title}\n"
-        f"Description: {task.description}\n"
-        f"Notes: {task.notes}\n"
-        f"Priority: {task.priority}\n"
-        f"Label: {task.label}\n"
-        f"Start date: {task.start_date}\n"
-        f"Due date: {task.due_date}\n"
-        f"Status: {task.status}"
+    "Task created successfully.\n\n"
+    f"Task: {task.title}\n"
+    f"Priority: {task.priority}\n"
+    f"Label: {task.label}\n"
+    f"Status: {task.status}\n"
+    f"Start Date: {task.start_date}\n"
+    f"Due Date: {task.due_date}\n"
+    + (f"Description: {task.description}\n" if task.description else "")
+    + (f"Notes: {task.notes}" if task.notes else "")
     )
 
 
-# GET TASKS TOOL
-# =====
 
+# GET TASKS TOOL
+# =========
 @function_tool
 def get_tasks(
     ctx: RunContextWrapper[PlanBuddyContext],
@@ -111,24 +109,28 @@ def get_tasks(
     task_list = []
 
     for task in tasks:
-        task_list.append(
-            f"ID: {task.id}\n"
-            f"Title: {task.title}\n"
-            f"Description: {task.description}\n"
-            f"Notes: {task.notes}\n"
+        task_output = (
+            f"Task: {task.title}\n"
             f"Priority: {task.priority}\n"
             f"Label: {task.label}\n"
-            f"Start Date: {task.start_date}\n"
-            f"Due Date: {task.due_date}\n"
-            f"Status: {task.status}"
-        )
+            f"Status: {task.status}\n"
+            f"Due Date: {task.due_date}"
+    )
+
+    if task.description:
+        task_output += f"\nDescription: {task.description}"
+
+    if task.notes:
+        task_output += f"\nNotes: {task.notes}"
+
+    task_list.append(task_output)
 
     return "\n\n".join(task_list)
 
 
+
 # UPDATE TASK TOOL
 # ====
-
 @function_tool
 def update_task(
     ctx: RunContextWrapper[PlanBuddyContext],
@@ -187,28 +189,29 @@ def update_task(
     db.refresh(task)
 
     return (
-        f"Task updated successfully:\n"
-        f"ID: {task.id}\n"
-        f"Title: {task.title}\n"
-        f"Description: {task.description}\n"
-        f"Notes: {task.notes}\n"
+        "Task updated successfully.\n\n"
+        f"Task: {task.title}\n"
         f"Priority: {task.priority}\n"
         f"Label: {task.label}\n"
+        f"Status: {task.status}\n"
         f"Start Date: {task.start_date}\n"
         f"Due Date: {task.due_date}\n"
-        f"Status: {task.status}"
+        + (f"Description: {task.description}\n" if task.description else "")
+        + (f"Notes: {task.notes}" if task.notes else "")
     )
 
 
-# PLANBUDDY AGENT
-# =====
 
+# PLANBUDDY AGENT
+# ===========
 planbuddy_agent = Agent(
     name="PlanBuddy Assistant",
     instructions=(
         "You are PlanBuddy, an AI productivity assistant. "
         "Help users organize tasks, plan their time, and make "
         "productive decisions. Keep responses clear and concise. "
+
+        "When a user greets you, respond with a cheesy task related, friendly greeting. "
 
         "When creating or updating a task, you MUST use only the "
         "following allowed values:\n\n"
@@ -237,7 +240,7 @@ planbuddy_agent = Agent(
         "When creating a task, infer reasonable values for fields "
         "the user does not explicitly provide. "
 
-        "Use Medium priority if priority is not specified. "
+        "Use Low priority if priority is not specified. "
 
         "Use Not Started as the default status. "
 
