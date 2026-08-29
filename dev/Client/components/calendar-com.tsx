@@ -30,6 +30,7 @@ const priorityRank: Record<string, number> = {
 export default function CalendarCom() {
   const [tasks, setTasks] = useState<Task[]>([])
   const [selectedDate, setSelectedDate] = useState<string | null>(null)
+  const [selectedTask, setSelectedTask] = useState<Task | null>(null)
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
 
@@ -119,10 +120,20 @@ export default function CalendarCom() {
     setSelectedDate(info.dateStr)
   }
 
+  /*
+   * Open the clicked task in the centered task popup.
+   */
   function handleEventClick(info: EventClickArg) {
     const task = info.event.extendedProps.task as Task
 
-    setSelectedDate(task.due_date)
+    setSelectedTask(task)
+  }
+
+  /*
+   * Close the task popup.
+   */
+  function closeTaskView() {
+    setSelectedTask(null)
   }
 
   return (
@@ -147,6 +158,7 @@ export default function CalendarCom() {
         eventClick={handleEventClick}
       />
 
+      {/* Tasks for selected date */}
       {selectedDate && (
         <div className="mt-6 rounded-xl border bg-background p-5">
           <div className="mb-4 flex items-center justify-between">
@@ -233,92 +245,228 @@ export default function CalendarCom() {
         </div>
       )}
 
-      <style jsx global>
-        {`
-          .fc {
-            --fc-border-color: hsl(var(--border));
-            --fc-page-bg-color: transparent;
-            --fc-neutral-bg-color: hsl(var(--muted));
-            --fc-today-bg-color: rgba(59, 130, 246, 0.08);
-            --fc-button-bg-color: transparent;
-            --fc-button-border-color: hsl(var(--border));
-            --fc-button-text-color: hsl(var(--foreground));
-            --fc-button-hover-bg-color: hsl(var(--muted));
-            --fc-button-hover-border-color: hsl(var(--border));
-            --fc-button-active-bg-color: hsl(var(--muted));
-            --fc-button-active-border-color: hsl(var(--border));
-            color: hsl(var(--foreground));
-          }
+      {/* Selected Task Modal */}
+      {selectedTask && (
+        <div
+          className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4"
+          onClick={closeTaskView}
+        >
+          <div
+            className="relative max-h-[90vh] w-full max-w-lg overflow-y-auto rounded-xl border bg-background p-6 shadow-2xl"
+            onClick={(event) => event.stopPropagation()}
+          >
+            {/* Close X */}
+            <button
+              onClick={closeTaskView}
+              className="absolute top-4 right-4 flex h-8 w-8 items-center justify-center rounded-md text-lg text-muted-foreground transition hover:bg-muted hover:text-foreground"
+              aria-label="Close task"
+            >
+              ✕
+            </button>
 
-          .fc .fc-toolbar-title {
-            font-size: 1.25rem;
-            font-weight: 600;
-          }
+            {/* Task Header */}
+            <div className="pr-10">
+              <p className="mb-1 text-sm text-muted-foreground">Task Details</p>
 
-          .fc .fc-button {
-            border-radius: 8px;
-            box-shadow: none;
-            text-transform: capitalize;
-          }
+              <h3 className="text-xl font-semibold">{selectedTask.title}</h3>
+            </div>
 
-          .fc .fc-daygrid-day {
-            min-height: 110px;
-            cursor: pointer;
-          }
+            {/* Task Information */}
+            <div className="mt-6 space-y-4">
+              {/* Description */}
+              <div>
+                <p className="text-xs font-medium tracking-wide text-muted-foreground uppercase">
+                  Description
+                </p>
 
-          /* Monday - Sunday */
-          .fc .fc-col-header-cell-cushion {
-            color: hsl(var(--foreground)) !important;
-            font-weight: 600;
-          }
+                <p className="mt-1 text-sm">
+                  {selectedTask.description || "No description provided."}
+                </p>
+              </div>
 
-          .fc .fc-daygrid-day-number {
-            color: hsl(var(--foreground)) !important;
-            padding: 8px;
-            font-size: 0.875rem;
-          }
+              {/* Priority + Status */}
+              {/* Priority */}
+              <div>
+                <p className="text-xs font-medium tracking-wide text-muted-foreground uppercase">
+                  Priority
+                </p>
 
-          .fc .fc-day-today {
-            background: rgba(59, 130, 246, 0.06) !important;
-          }
+                <div className="flex items-center gap-2">
+                  <span
+                    className={`h-1.5 w-1.5 rounded-full ${
+                      selectedTask.priority.toLowerCase() === "high"
+                        ? "bg-red-500"
+                        : selectedTask.priority.toLowerCase() === "medium"
+                          ? "bg-yellow-500"
+                          : "bg-green-500"
+                    }`}
+                  />
 
-          .fc .fc-event {
-            border: none !important;
-            border-radius: 6px;
-            padding: 3px 7px;
-            margin: 2px 4px;
-            font-size: 0.8rem;
-            font-weight: 500;
-            cursor: pointer;
-          }
+                  <div>
+                    <p
+                      className={`font-semibold ${
+                        selectedTask.priority.toLowerCase() === "high"
+                          ? "text-red-500"
+                          : selectedTask.priority.toLowerCase() === "medium"
+                            ? "text-yellow-600"
+                            : "text-green-500"
+                      }`}
+                    >
+                      {selectedTask.priority} Priority
+                    </p>
+                  </div>
+                </div>
+              </div>
 
-          /* High = Red */
-          .fc .priority-high {
-            background: #ef4444 !important;
-            color: white !important;
-          }
+              <div>
+                <p className="text-xs font-medium tracking-wide text-muted-foreground uppercase">
+                  Status
+                </p>
 
-          /* Medium = Orange */
-          .fc .priority-medium {
-            background: #f59e0b !important;
-            color: white !important;
-          }
+                <p className="mt-1 text-sm">{selectedTask.status}</p>
+              </div>
+            </div>
 
-          /* Low = Green */
-          .fc .priority-low {
-            background: #22c55e !important;
-            color: white !important;
-          }
+            {/* Label */}
+            <div className="mt-4">
+              <p className="text-xs font-medium tracking-wide text-muted-foreground uppercase">
+                Label
+              </p>
 
-          .fc .fc-event-title {
-            font-weight: 500;
-          }
+              <p className="mt-1 text-sm">{selectedTask.label || "No label"}</p>
+            </div>
 
-          .fc .fc-daygrid-day:hover {
-            background: hsl(var(--muted) / 0.35);
-          }
-        `}
-      </style>
+            {/* Due Date */}
+            <div className="mt-4">
+              <p className="text-xs font-medium tracking-wide text-muted-foreground uppercase">
+                Due Date
+              </p>
+
+              <p className="mt-1 text-sm">
+                {selectedTask.due_date
+                  ? new Date(
+                      `${selectedTask.due_date}T00:00:00`
+                    ).toLocaleDateString()
+                  : "No due date"}
+              </p>
+            </div>
+
+            {/* Start Date */}
+            {selectedTask.start_date && (
+              <div className="mt-4">
+                <p className="text-xs font-medium tracking-wide text-muted-foreground uppercase">
+                  Start Date
+                </p>
+
+                <p className="mt-1 text-sm">
+                  {new Date(
+                    `${selectedTask.start_date}T00:00:00`
+                  ).toLocaleDateString()}
+                </p>
+              </div>
+            )}
+
+            {/* Notes */}
+            {selectedTask.notes && (
+              <div className="mt-4">
+                <p className="text-xs font-medium tracking-wide text-muted-foreground uppercase">
+                  Notes
+                </p>
+
+                <p className="mt-1 text-sm whitespace-pre-wrap">
+                  {selectedTask.notes}
+                </p>
+              </div>
+            )}
+          </div>
+        </div>
+      )}
+
+      <style jsx global>{`
+        .fc {
+          --fc-border-color: hsl(var(--border));
+          --fc-page-bg-color: transparent;
+          --fc-neutral-bg-color: hsl(var(--muted));
+          --fc-today-bg-color: rgba(59, 130, 246, 0.08);
+          --fc-button-bg-color: transparent;
+          --fc-button-border-color: hsl(var(--border));
+          --fc-button-text-color: hsl(var(--foreground));
+          --fc-button-hover-bg-color: hsl(var(--muted));
+          --fc-button-hover-border-color: hsl(var(--border));
+          --fc-button-active-bg-color: hsl(var(--muted));
+          --fc-button-active-border-color: hsl(var(--border));
+
+          color: hsl(var(--foreground));
+        }
+
+        .fc .fc-toolbar-title {
+          font-size: 1.25rem;
+          font-weight: 600;
+        }
+
+        .fc .fc-button {
+          border-radius: 8px;
+          box-shadow: none;
+          text-transform: capitalize;
+        }
+
+        .fc .fc-daygrid-day {
+          min-height: 110px;
+          cursor: pointer;
+        }
+
+        /* Monday - Sunday */
+        .fc .fc-col-header-cell-cushion {
+          color: hsl(var(--foreground)) !important;
+          font-weight: 600;
+        }
+
+        .fc .fc-daygrid-day-number {
+          color: hsl(var(--foreground)) !important;
+          padding: 8px;
+          font-size: 0.875rem;
+        }
+
+        .fc .fc-day-today {
+          background: rgba(59, 130, 246, 0.06) !important;
+        }
+
+        .fc .fc-event {
+          border: none !important;
+          border-radius: 6px;
+          padding: 3px 7px;
+          margin: 2px 4px;
+          font-size: 0.8rem;
+          font-weight: 500;
+          cursor: pointer;
+        }
+
+        /* High = Red */
+        .fc .priority-high {
+          background: #ef4444 !important;
+          color: white !important;
+        }
+
+        /* Medium = Orange */
+        .fc .priority-medium {
+          background: #f59e0b !important;
+          color: white !important;
+        }
+
+        /* Low = Green */
+        .fc .priority-low {
+          background: #22c55e !important;
+          color: white !important;
+        }
+
+        .fc .fc-event-title {
+          font-weight: 500;
+        }
+
+        .fc .fc-daygrid-day:hover {
+          background: hsl(var(--muted) / 0.35);
+        }
+      `}</style>
     </div>
   )
 }
