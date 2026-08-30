@@ -3,12 +3,10 @@
 import { useState } from "react"
 
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
-
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Textarea } from "@/components/ui/textarea"
-
 import {
   Select,
   SelectContent,
@@ -16,15 +14,12 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select"
-
 import { Calendar, Pencil, Save, Trash2, X } from "lucide-react"
-
 import { updateTask, type ApiTask } from "@/lib/task-api"
 
+// Type definitions for task properties
 type Priority = "High" | "Medium" | "Low"
-
 type Status = "Not Started" | "In Progress" | "Delayed" | "Completed"
-
 type Label = "School" | "Work" | "Personal" | "Faith" | "Business"
 
 type TaskCardProps = {
@@ -40,10 +35,8 @@ function getPriorityVariant(priority: Priority) {
   switch (priority) {
     case "High":
       return "destructive"
-
     case "Medium":
       return "secondary"
-
     case "Low":
       return "outline"
   }
@@ -56,7 +49,6 @@ function getTimeRemaining(date: string) {
 
   const dueDate = new Date(`${date}T23:59:59`)
   const now = new Date()
-
   const difference = dueDate.getTime() - now.getTime()
 
   if (difference < 0) {
@@ -108,6 +100,7 @@ export default function TaskCard({
 }: TaskCardProps) {
   const [editing, setEditing] = useState(false)
   const [saving, setSaving] = useState(false)
+  const [pendingUpdate, setPendingUpdate] = useState(false)
   const [error, setError] = useState("")
 
   const [form, setForm] = useState<TaskForm>({
@@ -148,7 +141,10 @@ export default function TaskCard({
   async function saveTask() {
     if (!form.title.trim() || !form.description.trim() || !form.due_date) {
       setError("Title, description, and due date are required.")
+      return
+    }
 
+    if (saving) {
       return
     }
 
@@ -184,7 +180,12 @@ export default function TaskCard({
   }
 
   async function changeLabel(label: Label) {
+    if (pendingUpdate) {
+      return
+    }
+
     try {
+      setPendingUpdate(true)
       setError("")
 
       const updated = await updateTask(
@@ -211,11 +212,18 @@ export default function TaskCard({
     } catch (error) {
       console.error("Failed to update label:", error)
       setError("Unable to update label.")
+    } finally {
+      setPendingUpdate(false)
     }
   }
 
   async function changeStatus(status: Status) {
+    if (pendingUpdate) {
+      return
+    }
+
     try {
+      setPendingUpdate(true)
       setError("")
 
       const updated = await updateTask(
@@ -243,6 +251,8 @@ export default function TaskCard({
     } catch (error) {
       console.error("Failed to update status:", error)
       setError("Unable to update status.")
+    } finally {
+      setPendingUpdate(false)
     }
   }
 
@@ -276,6 +286,7 @@ export default function TaskCard({
 
             <Input
               value={form.title}
+              disabled={saving}
               onChange={(event) =>
                 setForm({
                   ...form,
@@ -291,6 +302,7 @@ export default function TaskCard({
             <Textarea
               rows={4}
               value={form.description}
+              disabled={saving}
               onChange={(event) =>
                 setForm({
                   ...form,
@@ -306,6 +318,7 @@ export default function TaskCard({
 
               <Select
                 value={form.label}
+                disabled={saving}
                 onValueChange={(value) =>
                   setForm({
                     ...form,
@@ -332,6 +345,7 @@ export default function TaskCard({
 
               <Select
                 value={form.priority}
+                disabled={saving}
                 onValueChange={(value) =>
                   setForm({
                     ...form,
@@ -360,6 +374,7 @@ export default function TaskCard({
 
               <Select
                 value={form.status}
+                disabled={saving}
                 onValueChange={(value) =>
                   setForm({
                     ...form,
@@ -389,6 +404,7 @@ export default function TaskCard({
               <Input
                 type="date"
                 value={form.start_date}
+                disabled={saving}
                 onChange={(event) =>
                   setForm({
                     ...form,
@@ -404,6 +420,7 @@ export default function TaskCard({
               <Input
                 type="date"
                 value={form.due_date}
+                disabled={saving}
                 onChange={(event) =>
                   setForm({
                     ...form,
@@ -420,6 +437,7 @@ export default function TaskCard({
             <Textarea
               rows={3}
               value={form.notes}
+              disabled={saving}
               onChange={(event) =>
                 setForm({
                   ...form,
@@ -461,6 +479,7 @@ export default function TaskCard({
             <Select
               value={task.label}
               onValueChange={(value) => changeLabel(value as Label)}
+              disabled={pendingUpdate}
             >
               <SelectTrigger className="h-7 w-auto min-w-[100px]">
                 <SelectValue />
@@ -477,7 +496,12 @@ export default function TaskCard({
           </div>
 
           <div className="flex gap-2">
-            <Button size="icon" variant="outline" onClick={startEditing}>
+            <Button
+              size="icon"
+              variant="outline"
+              onClick={startEditing}
+              disabled={pendingUpdate}
+            >
               <Pencil className="h-4 w-4" />
             </Button>
 
@@ -485,6 +509,7 @@ export default function TaskCard({
               size="icon"
               variant="destructive"
               onClick={() => onDelete(task.id)}
+              disabled={pendingUpdate}
             >
               <Trash2 className="h-4 w-4" />
             </Button>
@@ -497,6 +522,7 @@ export default function TaskCard({
           <Select
             value={task.status}
             onValueChange={(value) => changeStatus(value as Status)}
+            disabled={pendingUpdate}
           >
             <SelectTrigger className="w-[140px]">
               <SelectValue />
