@@ -81,7 +81,7 @@ export default function About() {
 
             <CardContent>
               <p className="text-muted-foreground">
-                PlanBuddy's AI assistant helps users brainstorm ideas,
+                PlanBuddy&apos;s AI assistant helps users brainstorm ideas,
                 organize tasks, create plans, and receive helpful
                 suggestions based on their goals.
               </p>
