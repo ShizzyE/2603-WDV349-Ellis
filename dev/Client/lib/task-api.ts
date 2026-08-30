@@ -21,13 +21,13 @@ export type FrontendTask = {
   description: string
   priority: "High" | "Medium" | "Low"
   label: "School" | "Work" | "Personal" | "Faith" | "Business"
-  dueDate: string
+  due_date: string
   status: "Not Started" | "In Progress" | "Delayed" | "Completed"
-  startDate: string
+  start_date: string
   notes: string
-  createdAt: string
-  updatedAt: string
-  completedAt?: string
+  created_at: string
+  updated_at: string
+  completed_at?: string
 }
 
 function getAuthHeaders() {
@@ -46,13 +46,13 @@ export function convertTask(task: ApiTask): FrontendTask {
     description: task.description,
     priority: task.priority as FrontendTask["priority"],
     label: task.label as FrontendTask["label"],
-    dueDate: task.due_date,
+    due_date: task.due_date,
     status: task.status as FrontendTask["status"],
-    startDate: task.start_date,
+    start_date: task.start_date,
     notes: task.notes,
-    createdAt: task.created_at ?? "",
-    updatedAt: task.updated_at ?? "",
-    completedAt: task.completed_at ?? undefined,
+    created_at: task.created_at ?? "",
+    updated_at: task.updated_at ?? "",
+    completed_at: task.completed_at ?? undefined,
   }
 }
 
