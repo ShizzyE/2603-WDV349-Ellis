@@ -133,7 +133,7 @@ export default function SettingsPage() {
             <p className="font-medium">Dark Mode</p>
 
             <p className="text-sm text-muted-foreground">
-              Press "D" to toggle theme
+              Press &quot;D&quot; to toggle theme
             </p>
           </div>
 
