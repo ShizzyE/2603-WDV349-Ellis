@@ -140,7 +140,7 @@ export default function Login() {
           </form>
 
           <div className="mt-4 flex items-center justify-center font-mono text-xs text-muted-foreground">
-            (Press <kbd className="p-1.5">"d"</kbd> to toggle dark mode)
+            (Press <kbd className="p-1.5"> &quot;d&quot;</kbd> to toggle dark mode)
           </div>
 
         </div>

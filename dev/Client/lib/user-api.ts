@@ -26,10 +26,7 @@ export async function registerUser(
   return data
 }
 
-export async function loginUser(
-  email: string,
-  password: string
-) {
+export async function loginUser(email: string, password: string) {
   const body = new URLSearchParams()
 
   body.append("username", email)
@@ -69,9 +66,65 @@ export async function getCurrentUser() {
   const data = await response.json()
 
   if (!response.ok) {
-    throw new Error(
-      data.detail || "Could not get current user"
-    )
+    throw new Error(data.detail || "Could not get current user")
+  }
+
+  return data
+}
+
+export async function updateCurrentUser(username: string) {
+  const token = localStorage.getItem("access_token")
+
+  if (!token) {
+    throw new Error("Not authenticated")
+  }
+
+  const response = await fetch(`${API_URL}/users/me`, {
+    method: "PUT",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${token}`,
+    },
+    body: JSON.stringify({
+      username,
+    }),
+  })
+
+  const data = await response.json()
+
+  if (!response.ok) {
+    throw new Error(data.detail || "Failed to update username")
+  }
+
+  return data
+}
+
+export async function changePassword(
+  currentPassword: string,
+  newPassword: string
+) {
+  const token = localStorage.getItem("access_token")
+
+  if (!token) {
+    throw new Error("Not authenticated")
+  }
+
+  const response = await fetch(`${API_URL}/users/me/password`, {
+    method: "PUT",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${token}`,
+    },
+    body: JSON.stringify({
+      current_password: currentPassword,
+      new_password: newPassword,
+    }),
+  })
+
+  const data = await response.json()
+
+  if (!response.ok) {
+    throw new Error(data.detail || "Failed to change password")
   }
 
   return data

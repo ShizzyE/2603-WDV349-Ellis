@@ -1,10 +1,12 @@
 "use client"
 
 import React, { useEffect, useMemo, useState } from "react"
+
 import Header from "@/components/header"
+import TaskCard from "@/components/task-card"
 
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
-import { Badge } from "@/components/ui/badge"
+
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Textarea } from "@/components/ui/textarea"
@@ -17,22 +19,13 @@ import {
   SelectValue,
 } from "@/components/ui/select"
 
-import {
-  Plus,
-  Search,
-  ArrowUpDown,
-  Calendar,
-  Pencil,
-  Trash2,
-} from "lucide-react"
+import { Plus, Search, ArrowUpDown } from "lucide-react"
 
 import {
   getTasks,
   createTask,
-  updateTask,
   deleteTask as deleteTaskApi,
-  convertTask,
-  type FrontendTask,
+  type ApiTask,
 } from "@/lib/task-api"
 
 type Priority = "High" | "Medium" | "Low"
@@ -41,174 +34,22 @@ type Status = "Not Started" | "In Progress" | "Delayed" | "Completed"
 
 type Label = "School" | "Work" | "Personal" | "Faith" | "Business"
 
-type Task = FrontendTask
+type Task = ApiTask
 
-function getTimeRemaining(date: string) {
-  const dueDate = new Date(`${date}T23:59:59`)
-  const now = new Date()
-
-  const difference = dueDate.getTime() - now.getTime()
-
-  if (difference < 0) {
-    return "Overdue"
-  }
-
-  const days = Math.ceil(difference / (1000 * 60 * 60 * 24))
-
-  if (days === 0) {
-    return "Due today"
-  }
-
-  if (days === 1) {
-    return "Due tomorrow"
-  }
-
-  return `${days} days remaining`
-}
-
-function getPriorityVariant(priority: Priority) {
-  switch (priority) {
-    case "High":
-      return "destructive"
-
-    case "Medium":
-      return "secondary"
-
-    case "Low":
-      return "outline"
-  }
-}
-
-function getStatusVariant(status: Status) {
-  switch (status) {
-    case "Completed":
-      return "default"
-
-    case "In Progress":
-      return "secondary"
-
-    case "Delayed":
-      return "destructive"
-
-    case "Not Started":
-      return "outline"
-  }
-}
-
-function TaskCard({
-  task,
-  onDelete,
-  onEdit,
-}: {
-  task: Task
-  onDelete: (id: number) => void
-  onEdit: (task: Task) => void
-}) {
-  const timeRemaining = getTimeRemaining(task.dueDate)
-
-  const overdue = timeRemaining === "Overdue"
-
-  return (
-    <Card
-      className={`transition-all hover:-translate-y-1 hover:shadow-lg ${
-        overdue ? "border-destructive/40" : ""
-      }`}
-    >
-      <CardHeader>
-        <div className="flex items-center justify-between">
-          <div className="flex items-center gap-2">
-            <Badge variant={getPriorityVariant(task.priority)}>
-              {task.priority}
-            </Badge>
-
-            <Badge variant="outline">{task.label}</Badge>
-          </div>
-
-          <div className="flex gap-2">
-            <Button size="icon" variant="outline" onClick={() => onEdit(task)}>
-              <Pencil className="h-4 w-4" />
-            </Button>
-
-            <Button
-              size="icon"
-              variant="destructive"
-              onClick={() => onDelete(task.id)}
-            >
-              <Trash2 className="h-4 w-4" />
-            </Button>
-          </div>
-        </div>
-
-        <div className="mt-3 flex items-center justify-between">
-          <CardTitle className="text-lg">{task.title}</CardTitle>
-
-          <Badge variant={getStatusVariant(task.status)}>{task.status}</Badge>
-        </div>
-      </CardHeader>
-
-      <CardContent className="space-y-5">
-        <p className="text-sm text-muted-foreground">{task.description}</p>
-
-        <div className="grid grid-cols-2 gap-4 border-t pt-4">
-          <div className="flex gap-2">
-            <Calendar className="mt-1 h-4 w-4 text-muted-foreground" />
-
-            <div>
-              <p className="text-xs text-muted-foreground">Due Date</p>
-
-              <p className="text-sm font-medium">
-                {new Date(`${task.dueDate}T00:00:00`).toLocaleDateString()}
-              </p>
-            </div>
-          </div>
-
-          <div>
-            <p className="text-xs text-muted-foreground">Deadline</p>
-
-            <p
-              className={
-                overdue
-                  ? "text-sm font-semibold text-destructive"
-                  : "text-sm font-semibold"
-              }
-            >
-              {timeRemaining}
-            </p>
-          </div>
-        </div>
-
-        {task.notes && (
-          <div className="rounded-md bg-muted/50 p-3">
-            <p className="text-xs font-medium">Notes</p>
-
-            <p className="mt-1 text-sm text-muted-foreground">{task.notes}</p>
-          </div>
-        )}
-      </CardContent>
-    </Card>
-  )
-}
+const labels: Label[] = ["School", "Work", "Personal", "Faith", "Business"]
 
 export default function Planning() {
   const [tasks, setTasks] = useState<Task[]>([])
-
   const [loading, setLoading] = useState(true)
-
   const [error, setError] = useState("")
 
   const [search, setSearch] = useState("")
-
   const [priorityFilter, setPriorityFilter] = useState("all")
-
   const [labelFilter, setLabelFilter] = useState("all")
-
   const [statusFilter, setStatusFilter] = useState("all")
-
   const [sortBy, setSortBy] = useState("dueDate")
 
   const [showForm, setShowForm] = useState(false)
-
-  const [editingTask, setEditingTask] = useState<Task | null>(null)
 
   const [newTask, setNewTask] = useState({
     title: "",
@@ -221,7 +62,9 @@ export default function Planning() {
     notes: "",
   })
 
-  /*LOAD TASKS FROM FASTAPI*/
+  /*
+   * Load tasks from FastAPI.
+   */
   useEffect(() => {
     async function loadTasks() {
       try {
@@ -230,9 +73,9 @@ export default function Planning() {
 
         const data = await getTasks()
 
-        setTasks(data.map(convertTask))
+        setTasks(data)
       } catch (error) {
-        console.error(error)
+        console.error("Failed to load tasks:", error)
         setError("Unable to load tasks.")
       } finally {
         setLoading(false)
@@ -242,6 +85,9 @@ export default function Planning() {
     loadTasks()
   }, [])
 
+  /*
+   * Reset the create-task form.
+   */
   function resetForm() {
     setNewTask({
       title: "",
@@ -253,11 +99,12 @@ export default function Planning() {
       startDate: "",
       notes: "",
     })
-
-    setEditingTask(null)
   }
 
-  /* DELETE TASK FROM DATABASE */
+  /*
+   * Delete task from the database and
+   * remove it from Planning state.
+   */
   async function deleteTask(id: number) {
     try {
       setError("")
@@ -266,30 +113,26 @@ export default function Planning() {
 
       setTasks((current) => current.filter((task) => task.id !== id))
     } catch (error) {
-      console.error(error)
+      console.error("Failed to delete task:", error)
       setError("Unable to delete task.")
     }
   }
 
-  /* OPEN EDIT FORM */
-  function editTask(task: Task) {
-    setEditingTask(task)
-
-    setNewTask({
-      title: task.title,
-      description: task.description,
-      priority: task.priority,
-      label: task.label,
-      dueDate: task.dueDate,
-      status: task.status,
-      startDate: task.startDate,
-      notes: task.notes,
-    })
-
-    setShowForm(true)
+  /*
+   * Receive an updated task from TaskCard
+   * and replace it in Planning state.
+   *
+   * TaskCard handles the actual API update.
+   */
+  function handleUpdated(updatedTask: ApiTask) {
+    setTasks((current) =>
+      current.map((task) => (task.id === updatedTask.id ? updatedTask : task))
+    )
   }
 
-  /* CREATE OR UPDATE TASK */
+  /*
+   * Create a new task.
+   */
   async function handleCreateTask(event: React.FormEvent) {
     event.preventDefault()
 
@@ -298,6 +141,8 @@ export default function Planning() {
       !newTask.description.trim() ||
       !newTask.dueDate
     ) {
+      setError("Title, description, and due date are required.")
+
       return
     }
 
@@ -315,36 +160,21 @@ export default function Planning() {
         start_date: newTask.startDate || newTask.dueDate,
       }
 
-      console.log("Task Data:", taskData) // Debugging line
+      const created = await createTask(taskData)
 
-      /* UPDATE EXISTING TASK */
-      if (editingTask) {
-        const updated = await updateTask(editingTask.id, taskData)
-
-        setTasks((current) =>
-          current.map((item) =>
-            item.id === editingTask.id ? convertTask(updated) : item
-          )
-        )
-      } else {
-        /*
-         * CREATE NEW TASK
-         */
-        const created = await createTask(taskData)
-
-        setTasks((current) => [...current, convertTask(created)])
-      }
+      setTasks((current) => [...current, created])
 
       resetForm()
       setShowForm(false)
     } catch (error) {
-      console.error(error)
-      setError("Unable to save task.")
+      console.error("Failed to create task:", error)
+      setError("Unable to create task.")
     }
   }
 
-  const labels = ["School", "Work", "Personal", "Faith", "Business"]
-
+  /*
+   * Filter and sort tasks.
+   */
   const filteredTasks = useMemo(() => {
     const filtered = tasks.filter((task) => {
       const searchTerm = search.toLowerCase()
@@ -367,20 +197,20 @@ export default function Planning() {
 
     return [...filtered].sort((a, b) => {
       if (sortBy === "priority") {
-        const order = {
+        const order: Record<Priority, number> = {
           High: 1,
           Medium: 2,
           Low: 3,
         }
 
-        return order[a.priority] - order[b.priority]
+        return order[a.priority as Priority] - order[b.priority as Priority]
       }
 
       if (sortBy === "title") {
         return a.title.localeCompare(b.title)
       }
 
-      return new Date(a.dueDate).getTime() - new Date(b.dueDate).getTime()
+      return new Date(a.due_date).getTime() - new Date(b.due_date).getTime()
     })
   }, [tasks, search, priorityFilter, labelFilter, statusFilter, sortBy])
 
@@ -390,7 +220,6 @@ export default function Planning() {
 
       <main className="flex flex-col gap-8 p-4 sm:p-6 lg:p-8">
         {/* Header */}
-
         <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
           <div>
             <h1 className="text-3xl font-bold tracking-tight">Planning</h1>
@@ -403,8 +232,8 @@ export default function Planning() {
           <Button
             onClick={() => {
               if (showForm) {
-                setShowForm(false)
                 resetForm()
+                setShowForm(false)
               } else {
                 resetForm()
                 setShowForm(true)
@@ -417,19 +246,17 @@ export default function Planning() {
         </div>
 
         {/* Error */}
-
         {error && (
           <div className="rounded-md border border-destructive/40 bg-destructive/10 p-4 text-sm text-destructive">
             {error}
           </div>
         )}
 
-        {/* Create/Edit Task */}
-
+        {/* Create Task */}
         {showForm && (
           <Card>
             <CardHeader>
-              <CardTitle>{editingTask ? "Edit Task" : "Create Task"}</CardTitle>
+              <CardTitle>Create Task</CardTitle>
             </CardHeader>
 
             <CardContent>
@@ -494,7 +321,7 @@ export default function Planning() {
                 </div>
 
                 <div className="grid gap-4 sm:grid-cols-3">
-                  <div>
+                  <div className="space-y-2">
                     <label className="text-sm font-medium">Priority</label>
 
                     <Select
@@ -520,7 +347,7 @@ export default function Planning() {
                     </Select>
                   </div>
 
-                  <div>
+                  <div className="space-y-2">
                     <label className="text-sm font-medium">Status</label>
 
                     <Select
@@ -548,7 +375,7 @@ export default function Planning() {
                     </Select>
                   </div>
 
-                  <div>
+                  <div className="space-y-2">
                     <label className="text-sm font-medium">Due Date</label>
 
                     <Input
@@ -565,7 +392,7 @@ export default function Planning() {
                   </div>
                 </div>
 
-                <div>
+                <div className="space-y-2">
                   <label className="text-sm font-medium">Start Date</label>
 
                   <Input
@@ -600,15 +427,15 @@ export default function Planning() {
                     type="button"
                     variant="outline"
                     onClick={() => {
-                      setShowForm(false)
                       resetForm()
+                      setShowForm(false)
                     }}
                   >
                     Cancel
                   </Button>
 
                   <Button type="submit" disabled={loading}>
-                    {editingTask ? "Update Task" : "Create Task"}
+                    Create Task
                   </Button>
                 </div>
               </form>
@@ -617,7 +444,6 @@ export default function Planning() {
         )}
 
         {/* Filters */}
-
         <Card>
           <CardContent className="p-4">
             <div className="grid gap-3 md:grid-cols-2 lg:grid-cols-5">
@@ -685,7 +511,6 @@ export default function Planning() {
               <Select value={sortBy} onValueChange={setSortBy}>
                 <SelectTrigger>
                   <ArrowUpDown className="mr-2 h-4 w-4" />
-
                   <SelectValue />
                 </SelectTrigger>
 
@@ -702,7 +527,6 @@ export default function Planning() {
         </Card>
 
         {/* Tasks */}
-
         <section>
           <div className="mb-4">
             <h2 className="text-2xl font-bold">Tasks</h2>
@@ -731,7 +555,7 @@ export default function Planning() {
                   key={task.id}
                   task={task}
                   onDelete={deleteTask}
-                  onEdit={editTask}
+                  onUpdated={handleUpdated}
                 />
               ))}
             </div>

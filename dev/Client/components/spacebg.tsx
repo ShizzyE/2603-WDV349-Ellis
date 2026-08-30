@@ -19,7 +19,7 @@ export default function SpaceBG() {
     const ctx = canvas.getContext("2d")
     if (!ctx) return
 
-    let stars: Star[] = []
+    const stars: Star[] = []
 
     const resizeCanvas = () => {
       canvas.width = window.innerWidth
