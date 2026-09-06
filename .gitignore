@@ -1,0 +1,69 @@
+# Dependency Directory
+node_modules/
+package-lock.json
+
+# Mac OS
+.DS_Store
+
+# VS Code
+.vscode/
+
+# Logs
+Logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# ENV Vars
+.env
+
+# Images, PDFs, ZIPs, etc. 
+# Before committing a binary file, make sure it's really necessary.
+# *.jpg
+# *.png
+# *.zip
+# *.pdf
+
+
+# Virtual Environment
+.venv/
+venv/
+env/
+
+# Python cache files
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+
+# Environment variables (VERY IMPORTANT)
+.env
+
+# VS Code / IDE
+.vscode/
+.idea/
+
+# macOS
+.DS_Store
+
+# Logs
+*.log
+
+# Database (if using local files, not PostgreSQL)
+*.sqlite3
+
+# Testing / coverage
+.coverage
+htmlcov/
+
+# Build / dist
+dist/
+build/
+*.egg-info/
+
+# FastAPI / Uvicorn
+*.pid
+
+# Misc
+*.swp
