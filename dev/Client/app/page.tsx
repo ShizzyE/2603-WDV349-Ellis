@@ -2,7 +2,7 @@
 
 import React from "react"
 import { useRouter } from "next/navigation"
-import { registerUser } from "@/lib/user-api"
+import { registerUser, loginUser } from "@/lib/user-api"
 
 export default function Page() {
   const router = useRouter()
@@ -18,14 +18,18 @@ export default function Page() {
     }
 
     try {
-      // Send registration request to FastAPI
       await registerUser(username, email, password)
 
-      console.log("Account created successfully")
+      // Automatically log the user in
+      const data = await loginUser(email, password)
+
+      // Store JWT
+      localStorage.setItem("access_token", data.access_token)
+
+      console.log("Account created and logged in successfully")
 
       alert("Account created successfully!")
 
-      // Send user to Dashboard page after successful registration
       router.push("/dashboard")
     } catch (error) {
       console.error("Registration error:", error)
@@ -110,7 +114,8 @@ export default function Page() {
           </form>
 
           <div className="mt-4 flex items-center justify-center font-mono text-xs text-muted-foreground">
-            (Press <kbd className="p-1.5">&quot;d&quot;</kbd> to toggle dark mode)
+            (Press <kbd className="p-1.5">&quot;d&quot;</kbd> to toggle dark
+            mode)
           </div>
         </div>
       </div>
