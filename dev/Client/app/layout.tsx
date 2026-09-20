@@ -5,6 +5,7 @@ import "./globals.css"
 import { ThemeProvider } from "@/components/theme-provider"
 import { cn } from "@/lib/utils"
 import { ReduxProvider } from "@/redux/provider"
+import { GoogleAnalytics } from "@next/third-parties/google"
 
 const fontSans = Geist({
   subsets: ["latin"],
@@ -21,7 +22,7 @@ export const metadata: Metadata = {
     default: "PlanBuddy | AI-Powered Planning",
     template: "%s | PlanBuddy",
   },
-  metadataBase: new URL("https://planbuddy.io"),
+  metadataBase: new URL("https://plalnbuddy.io"),
   description:
     "PlanBuddy is an AI-powered productivity app that helps users organize tasks, manage schedules, and stay focused on their goals.",
   keywords: [
@@ -67,6 +68,8 @@ export default function RootLayout({
         <ReduxProvider>
           <ThemeProvider>{children}</ThemeProvider>
         </ReduxProvider>
+
+        <GoogleAnalytics gaId="G-EM4WMJ2JZQ" />
       </body>
     </html>
   )
