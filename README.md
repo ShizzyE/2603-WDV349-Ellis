@@ -26,6 +26,24 @@
 
 ---
 
+## Final Handoff
+
+This repository contains the complete PlanBuddy Final Handoff Packet, including the source code, project documentation, assets, installation instructions, and maintenance documentation.
+
+### Documentation
+* Installation Instructions
+* Maintenance Plan
+* Project Documentation
+* Assets and Graphics
+
+### Project Source Code
+* [Backend Setup](#backend-setup)
+* [Frontend Setup](#frontend-setup)
+
+For installation and local setup, see the Installation Instructions.
+
+---
+
 ## Overview
 
 PlanBuddy is an AI-powered productivity application built to bring task management, scheduling, notes, and AI assistance into one workspace. 
